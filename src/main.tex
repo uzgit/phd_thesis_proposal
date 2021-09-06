@@ -1,27 +1,60 @@
 % Preamble
-\documentclass[11pt]{article}
+\documentclass[11pt, a4paper]{report}
 
 % Packages
 \usepackage[top=2.54cm, bottom=2.54cm, right=2.54cm, left=2.54cm]{geometry}
 \usepackage{lipsum}
 \usepackage{graphicx}
+\graphicspath{{images/}}
 \usepackage{xcolor}
 \usepackage{datetime}
-\newdateformat{specialdate}{\twodigit{\THEDAY} \ \monthname[\THEMONTH] \THEYEAR}
+\newdateformat{specialdate}{\monthname[\THEMONTH] \THEYEAR}
+\usepackage{enumitem}
+\usepackage[cc]{titlepic}
+
+\usepackage{tocloft}
+%\renewcommand{\cftpartleader}{\cftdotfill{\cftdotsep}} % for parts
+%\renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}} % for chapters
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}} % for sections
+% for Icelandic
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+%\usepackage[icelandic]{babel}
+
+\newcommand{\documenttitle}{Real Time, Onboard-only Landing Site Evaluation for Autonomous Drones}
+\newcommand{\documentauthor}{Joshua Springer}
 
 \usepackage[pdfusetitle]{hyperref}
-
-\author{AUTHOR}
-\title{TEMPLATE}
-\date{\specialdate\today}
+%\title{Real Time, Onboard-only Landing Site Evaluation for Autonomous Drones}
+%\author{Joshua Springer}
+%\title{
+%    {\centering\includegraphics[width=5cm]{ru_logo.png}}~\\[1cm]
+%    \textbf{Real Time, Onboard-only Landing Site Evaluation for Autonomous Drones}
+%
+%
+%}
+%
+%\date{\specialdate\today}
 
 \begin{document}
-    \maketitle
 
-    \section{Introduction}
-    \input{sections/introduction.tex}
+    % pre-text stuff
+    \pagenumbering{roman}
+    \input{sections/title_page.tex}
+    \input{sections/copyright.tex}
+    \input{sections/abstract_english.tex}
+    \input{sections/abstract_icelandic.tex}
+    \input{sections/acknowledgements.tex}
+    \tableofcontents
+    \newpage
 
-    \bibliography{main}
+    % main text stuff
+    \pagenumbering{arabic}
+    \chapter{Introduction}
+    \input{sections/motivation.tex}
+
+    \newpage
+    \bibliography{references}
     \bibliographystyle{plain}
 
 \end{document}
