@@ -6,9 +6,38 @@ As a result, most drone landings are carried out by
 (or under the supervision of)
 a human operator,
 inherently limiting the applicability of autonomous drones.
+Some autopilot software includes an \gls{API} for \textit{precision landing},
+which allows a drone to localize and direct itself with respect to a landing pad during an autonomous landing,
+according to data provided by external sensors and programs.
+However, there is no particular method of autonomous landing in widespread use.
+As autonomous and semi-autonomous drones are not able to reliably handle landings
+on rough terrain or in non-ideal conditions, human operators often disable
+autonomous control during landing (opting for full manual control),
+or abuse/hack the landing system by descending to a low altitude,
+grabbing hold of the drone,
+and disabling the motors,
+as shown in Figure~\ref{figure:hand_landing}.
+Aside from potentially exposing users to dangerous rotors,
+this landing technique showcases the limitations induced by a lack of
+autonomous landing method.
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=10cm]{human_assisted_landing}
-    \caption{Non-ideal, human-assisted landing in the absence of an autonomous, safe landing method that considers the surrounding environment.}
+    \sbox0{\includegraphics[width=10cm]{human_assisted_landing}}
+    \begin{minipage}{\wd0}
+      \usebox0
+      \caption{Non-ideal, human-assisted landing in the absence of an autonomous, safe landing method that considers the surrounding environment.}
+      \label{figure:hand_landing}
+    \end{minipage}
 \end{figure}
+
+In sufficiently flat, large areas, fully autonomous drone missions can end with a GPS-based
+autonomous landing which is blind to obstacles in the environment.
+However,
+intuitively and demonstrably,
+this can lead to crash-landings at landing sites that have obstacles within
+the error radius of the GPS,
+which can be anywhere from a few centimeters to a few meters.
+In the available open source autopilot softwares,
+obstacles are simply not handled,
+and drones will continue their landing attempts even if fatally obstructed.
