@@ -41,27 +41,63 @@ An overview the components is as follows:
 The computational components require some protection from the harsh Icelandic weather,
 and we therefore designed and 3D-printed a component mounting plate with a connector for a canopy.
 We also designed and printed cases to protect camera modules and allow them to be mounted in a gimbal with a GoPro form factor.
-These components can be seen
+The final versions of these components (after several iterations) can be seen in Figure \ref{figure:printed_parts}.
+The fully assembled hexacopters are shown in Figure \ref{figure:drone_pictures}
 
-%\begin{figure}
-%  \centering
-%  \begin{subfigure}[b]{0.33\textwidth}
-%    \includegraphics[width=\textwidth]{canopy.png}
-%    \caption*{Protective Canopy.}
-%  \end{subfigure}
-%  \hspace{1cm}
-%  \begin{subfigure}[b]{0.33\textwidth}
-%    \includegraphics[width=\textwidth]{component_mounting_plate.png}
-%    \caption*{Component mounting plate.}
-%  \end{subfigure}
-%
-%  \begin{subfigure}[b]{0.33\textwidth}
-%    \includegraphics[width=\textwidth]{coral_case.png}
-%    \caption*{Google Coral camera case.}
-%  \end{subfigure}
-%  \hspace{1cm}
-%  \begin{subfigure}[b]{0.33\textwidth}
-%    \includegraphics[width=\textwidth]{nano_case.png}
-%    \caption*{Jetson Nano camera case.}
-%  \end{subfigure}
-%\end{figure}
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.33\textwidth}
+    \includegraphics[width=\textwidth]{canopy.png}
+    \caption*{Protective Canopy.}
+  \end{subfigure}
+  \hspace{1cm}
+  \begin{subfigure}[b]{0.33\textwidth}
+    \includegraphics[width=\textwidth]{component_mounting_plate.png}
+    \caption*{Component mounting plate.}
+  \end{subfigure}
+
+  \begin{subfigure}[b]{0.33\textwidth}
+    \includegraphics[width=\textwidth]{coral_case.png}
+    \caption*{Google Coral camera case.}
+  \end{subfigure}
+  \hspace{1cm}
+  \begin{subfigure}[b]{0.33\textwidth}
+    \includegraphics[width=\textwidth]{nano_case.png}
+    \caption*{Jetson Nano camera case.}
+  \end{subfigure}
+  \caption{3D printed parts for the Tarot hexacopters.}
+  \label{figure:printed_parts}
+\end{figure}
+
+\begin{figure}
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/jetson_drone.JPG}
+        \caption{The Jetson drone.}
+        \label{fig:jetson_drone}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/coral_drone.JPG}
+        \caption{The Coral drone.}
+        \label{fig:coral_drone}
+    \end{subfigure}
+
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/jetson_electronics.JPG}
+        \caption{The Jetson drone's electronics compartment.}
+        \label{fig:jetson_electronics}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/coral_electronics.JPG}
+        \caption{The Coral drone's electronics compartment.}
+        \label{fig:coral_electronics}
+    \end{subfigure}
+
+    \caption{The assembled drones and their electronics compartments.}
+    \label{figure:drone_pictures}
+\end{figure}
+
+The hexacopters execute code from the master thesis, which was originally tested in Gazebo simulator.
