@@ -115,3 +115,75 @@ The algorithm is implemented as a set of ROS modules, as explained below:
 
 \subsection{Results}
 
+The drones fly with good stability even in high winds, with an estimated 15-20 minute flight time.
+\footnote{Video of some of the flights and landing attempts can be found at:
+\href{https://vimeo.com/461576798}{https://vimeo.com/461576798}}
+In lab tests and in flight, they are able to detect and track fiducial markers using the method
+tested in simulation.
+However, only the more lightweight WhyCon/WhyCode fiducial system was used in testing, instead of the
+April Tag system, because of the time constraints of this summer project.
+The performance of the drones in tracking the markers is shown in Figure~\ref{fig:gimbal_aim_performance},
+where each subfigure shows the position of the marker in the camera frame in the given axis,
+with a resolution of 640x480 pixels after resizing in order to decrease the computational requirements
+of the image analysis.
+The wide angle lens of the Jetson Nano camera module results in much smoother tracking,
+since each pixel corresponds to a larger distance than with the Google Coral camera module.
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/jetson_gimbal_performance_x_axis.png}
+    \caption{Performance of the Jetson drone aiming the gimbal in the x axis.}
+    \label{fig:jetson_gimbal_performance_x_axis}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/jetson_gimbal_performance_y_axis.png}
+    \caption{Performance of the Jetson drone aiming the gimbal in the y axis.}
+    \label{fig:jetson_gimbal_performance_y_axis}
+    \end{subfigure}
+        \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/coral_gimbal_performance_x_axis.png}
+    \caption{Performance of the Coral drone aiming the gimbal in the x axis.}
+    \label{fig:coral_gimbal_performance_x_axis}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/coral_gimbal_performance_y_axis.png}
+    \caption{Performance of the Coral drone aiming the gimbal in the y axis.}
+    \label{fig:coral_gimbal_performance_y_axis}
+    \end{subfigure}
+    \caption{Performance of aiming the gimbals.}
+    \label{fig:gimbal_aim_performance}
+\end{figure}
+
+The drones are able to approach the landing pad autonomously,
+but have not yet touched down autonomously.
+This is due to two principal factors.
+First, GPS precision is low in Iceland (i.e. geometric dilution of precision (GDOP) is relatively high)
+because of Iceland's distance from the equator.
+Methods of autonomous positioning within the ArduPilot framework which were not ostensibly GPS-based
+are eventually translated into lat/lon/alt position targets,
+and the drones attempted to navigate to them with GPS only (instead of other methods such as dead reckoning).
+Since the GDOP was prohibitively high, the drones could not accurately estimate their position.
+Therefore, they could only follow a coherent path for a limited amount of time when navigating autonomously,
+after which the trajectory was unpredictable, even if the position target commands were correct.
+
+Second, there is a fundamental challenge with fiducial markers
+which comes as a result of the limitations of embedding 2-dimensional shapes into 3-dimensional spaces.
+While the position of the marker in the camera frame can be detected unambiguously,
+the orientation of the marker cannot.
+Especially when the marker is almost normal to the camera's view,
+its orientation becomes increasingly ambiguous in the roll and pitch components.
+(This can be intuitively visualized by imagining the difference between the appearances of a marker
+when it is at $(R,P,Y)=(1^{\circ}, 0, 0)$ versus when it is at $(R,P,Y)=(-1^{\circ}, 0, 0)$.
+These orientations would be difficult to distinguish even for the human eye, and much more difficult
+for a camera with 640x480 pixels.)
+Tests in simulation revealed this phenomenon, however, because of a variety of factors
+(a more ``perfect'' camera/marker/world, better GPS, lack of logistical constraints, etc.),
+this phenomenon was not prohibitive in simulation, and successful landings were plentiful.
+
+These two problems set the stage for more research and modifications to the fiducial systems,
+outlined in Sections~\ref{section:whycode_modifications}~and~\ref{section:apriltag_modifications}.
