@@ -1,4 +1,4 @@
-\section{Initial Hexacopters}
+\section{Building and Flying Two Hexacopters}
 
 After finishing a master thesis~\cite{joshua_master_thesis} wherein I developed an algorithm for autonomously landing a drone using
 fiducial markers in simulation, the next step was to test this method on physical platforms.
@@ -100,4 +100,18 @@ The fully assembled hexacopters are shown in Figure \ref{figure:drone_pictures}
     \label{figure:drone_pictures}
 \end{figure}
 
-The hexacopters execute code from the master thesis, which was originally tested in Gazebo simulator.
+The algorithm is implemented as a set of ROS modules, as explained below:
+\begin{enumerate}
+    \item \texttt{gscam} retrieves camera input and makes it available as a ROS topic,
+    \item \texttt{whycon\_ros} analyzes camera images to detect WhyCon/WhyCode markers and determine their pose,
+    \item \texttt{gimbal\_controller} reads the poses of any detected markers,
+                                      passes this information as input to two PID systems,
+                                      converts the output of the PID systems to PWM outputs,
+                                      and forwards the PWM outputs to the autopilot software to control the gimbal.
+    \item \texttt{landing\_controller} reads the poses of any detected markers,
+                                        performs coordinate system transforms to generate a target position,
+                                        and forwards them to the autopilot software.
+\end{enumerate}
+
+\subsection{Results}
+
