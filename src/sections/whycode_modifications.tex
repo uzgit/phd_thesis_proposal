@@ -65,11 +65,10 @@ This ambiguity comes from the fact that the orientation is principally calculate
 marker's ellipses under the assumption that the marker is truly a circle.
 Calculating the orientation based on these semi-axes gives \textit{two} candidate solutions
 that satisfy the assumption that the marker is facing the camera,
-and it is difficult to determine which of these candidates represents reality.
+and it is difficult to determine which of these candidates represents reality,
+especially when the marker is normal or near-normal to the camera's field of view.
 The original WhyCode software~\cite{LCAS_whycon} arbitrarily chooses the first solution as correct,
 and as such it does not need much analysis except to say that it has a high likelihood of choosing the wrong solution.
-Refinements of the code, such as that proposed by Jiri Ulrich~\cite{julrich_whycon} attempt to disambiguate
-the orientation, with partial success.
 
 \begin{figure}
     \centering
@@ -95,3 +94,56 @@ the orientation, with partial success.
     \caption{Components of the orientation quaternion for a WhyCode marker. Emphasis is placed on the discontinuties in all components, and sign flipping in the Z component.}
     \label{figure:orientation_flipping}
 \end{figure}
+
+In the context of fiducial-based drone landing, the issue of orientation ambiguity
+
+Refinements of the code, such as that proposed by Jiri Ulrich~\cite{julrich_whycon} attempt to disambiguate
+the orientation, with partial success.
+This method assumes that all ``teeth'' that form the marker's ID should have the same number of sample points,
+and therefore chooses the candidate solution that has lower variance of the number of sample points per tooth.
+The samples are collected along the ellipse that is halfway between the white and black ellipses of the marker.
+The candidate solutions predict this ellipse to be in slightly different places,
+owing to the distortion caused by the camera lens.
+The rationale for the method is that the correct solution should predict the ellipse to be in its correct place,
+minimizing the variance in the number of sample points that coincide with each tooth.
+Conversely, the incorrect solution should predict the ellipse to be in the incorrect place,
+and therefore fewer sample points should coincide with teeth one side, increasing the variance.
+This provides a baseline on which to disambiguate the solutions, but does not reliably choose the correct one,
+especially as the candidate solutions get closer and closer and the marker becomes more and more normal to the camera.
+
+\subsection{Proposed Solutions}
+
+As part of this project, I explore two different ways of solving the orientation ambiguity.
+
+\subsubsection{Radial Tooth Edge Sampling}
+
+The first method (the \texttt{ellipse\_sampling} branch of ~\cite{uzgit_whycon}) is similar to that proposed by Jiri Ulrich,
+in that it is based on decreasing variance in sample points along the teeth.
+After the two candidate solutions for the orientation and the marker ID have been determined,
+a second phase of sampling begins.
+Each candidate solution predicts the center of the inner, white circle in pixel coordinates.
+(Since this system is designed to be lightweight, the center is not actually calculated, nor needed, to determine the position of the marker,
+and explicit calculation of this center is neglected by default.)
+Given the structure of WhyCode markers, we can assume that the circle along which the ID is sampled
+has a radius of $1.5r$, where $r$ is the radius of the inner circle, and the radius of the circle bounding the teeth is $2r$.
+Further, from the ID sampling, we can identify the angle that goes through the center of each tooth.
+This makes it possible to test how well the candidate solution is centered on the marker at many points,
+and leverages the fact that camera distortion increases (and therefore prediction errors increase in magnitude) as one moves away from the center of the image.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{images/whycode_ellipse_sampling_example}
+    \caption{Example of sampling WhyCode markers on the radial edges of the teeth.
+    The black/blue circle illustrates ID sampling locations, with the bluest samples occurring first, and blackest samples occuring last.
+    Each of the blue/white radial line segments illustrates the sampling of the predicted edges of the teeth.
+    The method chooses that solution that minimizes the variances of the ratio of blue to white on these line segments.
+    }
+    \label{figure:ellipse_sampling}
+\end{figure}
+
+\subsubsection{Co-planar Markers}
+
+The second method works under the assumption that all markers are co-planar.
+Since the WhyCode system can accurately and quickly determine the positions of the markers,
+this assumption allows the orientation of co-planar markers to be determined unambiguously,
+\textit{when 3 or more markers are detected simultaneously}.
