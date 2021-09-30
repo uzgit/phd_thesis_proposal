@@ -1,36 +1,52 @@
 \section{WhyCode Modifications}
 \label{section:whycode_modifications}
 
+\subsection{Background}
+
 The WhyCon fiducial marker, shown in Figure \ref{fig:whycon} consists of a white circle inside of a larger black circle.
 The identification algorithm is computationally simple:
 \begin{itemize}
-    \item A rectified image is searched for white regions.
+    \item An input image is searched for white regions.
     \item The detector flood-fills and determines a measure of circularity for each white region.
     \item The detector seeks a black region directly outside of each white region, flood fills it, and determines a measure of circularity for it.
     \item The circularity measures are compared, and the white/black region combination is called a WhyCon marker if it is adequately circular (under projection).
-    \item The major and minor axes provide a basis from which to determine the marker's orientation.
     \item The position of the marker is determined using the pinhole model of a monocular camera with known intrinsic parameters
             (pixel resolution, lens distortion, principal points, focal lengths), and the diameter of the marker.
+    \item The major and minor axes of the elliptical regions provide a basis from which to determine the marker's orientation.
 \end{itemize}
 
-The WhyCon system's purpose is to determine the pose (position \textit{and} orientation) of detected WhyCon markers.
-The position of the markers is
+The WhyCon software's purpose is to determine the pose (position \textit{and} orientation) of detected WhyCon markers
+with respect to the camera field of view.
+The position of the markers can be determined with centimeter accuracy in most use cases.
+However, the full radial symmetry of the WhyCon marker inherently prevents the assignment or recognition
+of a ``yaw'' orientation - that is, only two components of the marker's rotation can be determined.
 
-\begin{figure}[h]
+\begin{figure}
     \centering
     \includegraphics[width=0.16\textwidth]{images/whycon_example.png}
     \caption{WhyCon marker.}
     \label{fig:whycon}
 \end{figure}
 
-\begin{figure}[h]
+WhyCode expands on WhyCon to add an ID and yaw orientation to the plain WhyCon marker.
+While the majority of the detection algorithm is the same,
+an ID is encoded onto the marker in the form of a Manchester encoding that is wrapped around the inner, white circle,
+as shown in Figure \ref{fig:whycode_id}.
+By sampling along the circle halfway between the white circle and black circle, the detector can determine the ID encoding.
+Figure \ref{fig:rotationally_symmetric_whycode_markers} shows potential collisions between WhyCode markers that are
+rotationally symmetric but have different IDs.
+While it is impossible to distinguish between rotationally symmetric markers, this problem can be overcome by bit-shifting
+the ID's binary string to its lowest value in all cases before determining the ID.
+This also gives a means of determining a ``yaw origin'' so that the orientation of the marker can be determined in 3 dimensions.
+
+\begin{figure}
     \centering
     \includegraphics[width=0.4\textwidth]{images/whycode_manchester_explanation.png}
     \caption{WhyCode ID Manchester ``Necklace'' Encoding.}
     \label{fig:whycode_id}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}
     \centering
     \includegraphics[width=0.2\textwidth]{images/00000001.png}
     \includegraphics[width=0.2\textwidth]{images/00000002.png}
@@ -38,4 +54,44 @@ The position of the markers is
     \includegraphics[width=0.2\textwidth]{images/00000004.png}
     \caption{Rotational symmetry in 2-bit WhyCode markers.}
     \label{fig:rotationally_symmetric_whycode_markers}
+\end{figure}
+
+\subsection{Orientation Ambiguity}
+
+In contrast to the accurately/unambiguously recognizeable position of WhyCode markers, the orientation
+is ambiguous in many circumstances, as can be seen in Figure \ref{figure:orientation_flipping},
+particularly during time $t \in [4,8]$.
+This ambiguity comes from the fact that the orientation is principally calculated from the semi-axes of the
+marker's ellipses under the assumption that the marker is truly a circle.
+Calculating the orientation based on these semi-axes gives \textit{two} candidate solutions
+that satisfy the assumption that the marker is facing the camera,
+and it is difficult to determine which of these candidates represents reality.
+The original WhyCode software~\cite{LCAS_whycon} arbitrarily chooses the first solution as correct,
+and as such it does not need much analysis except to say that it has a high likelihood of choosing the wrong solution.
+Refinements of the code, such as that proposed by Jiri Ulrich~\cite{julrich_whycon} attempt to disambiguate
+the orientation, with partial success.
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{images/orientation_x_figure.png}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{images/orientation_y_figure.png}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{images/orientation_z_figure.png}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{images/orientation_w_figure.png}
+    \end{subfigure}
+    \caption{Components of the orientation quaternion for a WhyCode marker. Emphasis is placed on the discontinuties in all components, and sign flipping in the Z component.}
+    \label{figure:orientation_flipping}
 \end{figure}
