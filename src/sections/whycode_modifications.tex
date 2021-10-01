@@ -105,7 +105,7 @@ the landing scenario are required, such as (for example) that the camera is faci
     \label{figure:orientation_flipping}
 \end{figure}
 
-Refinements of the WhyCon/WhyCode software, such as that proposed by Jiri Ulrich~\cite{julrich_whycon} attempt to disambiguate
+Refinements of the WhyCon/WhyCode software, such as that proposed by Jiri Ulrich~\cite{julrich_whycon} (shown in ) attempt to disambiguate
 the orientation, with partial success.
 This method assumes that all ``teeth'' that form the marker's ID should have the same number of sample points,
 and therefore chooses the candidate solution that has lower variance of the number of sample points per tooth.
@@ -118,6 +118,13 @@ Conversely, the incorrect solution should predict the ellipse to be in the incor
 and therefore fewer sample points should coincide with teeth one side, increasing the variance.
 This provides a baseline on which to disambiguate the solutions, but does not reliably choose the correct one,
 especially as the candidate solutions get closer and closer and the marker becomes more and more normal to the camera.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{images/cropped_whycode_3_8_jiri_example}
+    \caption{Example from Jiri Ulrich's code, showing the circular sampling locations.}
+    \label{figure:jiri_whycode}
+\end{figure}
 
 \subsection{Proposed Solutions}
 
@@ -140,7 +147,7 @@ and leverages the fact that camera distortion increases (and therefore predictio
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.5\textwidth]{images/whycode_ellipse_sampling_example}
+    \includegraphics[width=0.5\textwidth]{images/cropped_whycode_3_8_ellipse_sampling_example}
     \caption{Example of sampling WhyCode markers on the radial edges of the teeth.
     The black/blue circle illustrates ID sampling locations, with the bluest samples occurring first, and blackest samples occuring last.
     Each of the blue/white radial line segments illustrates the sampling of the predicted edges of the teeth.
