@@ -70,6 +70,16 @@ especially when the marker is normal or near-normal to the camera's field of vie
 The original WhyCode software~\cite{LCAS_whycon} arbitrarily chooses the first solution as correct,
 and as such it does not need much analysis except to say that it has a high likelihood of choosing the wrong solution.
 
+In the context of fiducial-based drone landing, the issue of orientation ambiguity affects a drone's ability to
+estimate its own pose when its camera is mounted on a gimbal.
+Many gimbals do not output their orientations to the flight controller, and their orientations cannot be directly
+calculated from control signals in many cases, since many gimbals have sophisticated control systems.
+While a control signal may communicate a \textit{target} orientation,
+many gimbals have their own IMU and take into account angular motion and acceleration in addition to a control signal.
+Therefore, it is difficult to determine the orientation of the gimbal simply based on its control signals.
+Without the orientation of either the fiducial marker \textit{or} the gimbal, more assumptions about
+the landing scenario are required, such as (for example) that the camera is facing directly down always.
+
 \begin{figure}
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
@@ -95,9 +105,7 @@ and as such it does not need much analysis except to say that it has a high like
     \label{figure:orientation_flipping}
 \end{figure}
 
-In the context of fiducial-based drone landing, the issue of orientation ambiguity
-
-Refinements of the code, such as that proposed by Jiri Ulrich~\cite{julrich_whycon} attempt to disambiguate
+Refinements of the WhyCon/WhyCode software, such as that proposed by Jiri Ulrich~\cite{julrich_whycon} attempt to disambiguate
 the orientation, with partial success.
 This method assumes that all ``teeth'' that form the marker's ID should have the same number of sample points,
 and therefore chooses the candidate solution that has lower variance of the number of sample points per tooth.
