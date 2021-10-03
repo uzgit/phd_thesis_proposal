@@ -80,6 +80,13 @@ Therefore, it is difficult to determine the orientation of the gimbal simply bas
 Without the orientation of either the fiducial marker \textit{or} the gimbal, more assumptions about
 the landing scenario are required, such as (for example) that the camera is facing directly down always.
 
+When a drone uses a fiducial marker to determine its position with respect to a landing pad without the assumption
+that its camera is in a fixed orientation, it can (theoretically) use the marker's perceived orientation instead.
+The drone can rotate the marker's \textit{position} by the inverse of its \textit{orientation} in order to determine
+its own position in the reference frame of the marker.
+However, such transformations, which depend on the ambiguous orientation of the marker, also exhibit such ambiguities -
+discontinuities in the orientation ultimately result in discontinuities in the perceived location of the drone.
+
 \begin{figure}
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
@@ -101,7 +108,7 @@ the landing scenario are required, such as (for example) that the camera is faci
          \centering
          \includegraphics[width=\textwidth]{images/orientation_w_figure.png}
     \end{subfigure}
-    \caption{Components of the orientation quaternion for a WhyCode marker. Emphasis is placed on the discontinuties in all components, and sign flipping in the Z component.}
+    \caption{Components of the orientation quaternion for a WhyCode marker. Emphasis is placed on the discontinuities in all components, and sign flipping in the Z component.}
     \label{figure:orientation_flipping}
 \end{figure}
 
@@ -126,6 +133,28 @@ especially as the candidate solutions get closer and closer and the marker becom
     \label{figure:jiri_whycode}
 \end{figure}
 
+\begin{figure}
+    \centering
+        \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{images/jiri.csv_figure_u}
+    \end{subfigure}
+
+    \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{images/jiri.csv_figure_w}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{images/jiri.csv_figure_n}
+    \end{subfigure}
+
+    \caption{Each of the components of the perceived camera translation for 8-bit WhyCode markers with IDs 1, 10, and 17, using Jiri Ulrich's decision metric.
+    The discontinuities occur mostly in the "west" and "north" components between frames 600 and 800, but also between frames 1200-1400.}
+    \label{figure:jiri_uwn}
+\end{figure}
+
 \subsection{Proposed Solutions}
 
 As part of this project, I explore two different ways of solving the orientation ambiguity.
@@ -145,6 +174,10 @@ Further, from the ID sampling, we can identify the angle that goes through the c
 This makes it possible to test how well the candidate solution is centered on the marker at many points,
 and leverages the fact that camera distortion increases (and therefore prediction errors increase in magnitude) as one moves away from the center of the image.
 
+The method does decrease the number of discontinuities in the perceived camera location, as shown in Figure \ref{figure:ellipse_sampling_uwn},
+at the cost of significantly more sample points (more than double the original number).
+Unfortunately, it does not eliminate the discontinuities enough to justify the additional computational requirements.
+
 \begin{figure}
     \centering
     \includegraphics[width=0.5\textwidth]{images/cropped_whycode_3_8_ellipse_sampling_example}
@@ -156,9 +189,69 @@ and leverages the fact that camera distortion increases (and therefore predictio
     \label{figure:ellipse_sampling}
 \end{figure}
 
+\begin{figure}
+    \centering
+        \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{images/ellipse_sampling.csv_figure_u}
+    \end{subfigure}
+
+    \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{images/ellipse_sampling.csv_figure_w}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{images/ellipse_sampling.csv_figure_n}
+    \end{subfigure}
+
+    \caption{Each of the components of the perceived camera translation for 8-bit WhyCode markers with IDs 1, 10, and 17, using the tooth edge sampling decision metric.
+    The discontinuities still occur mostly in the "west" and "north" components between frames 600 and 800, but also between frames 1200-1400.}
+    \label{figure:ellipse_sampling_uwn}
+\end{figure}
+
 \subsubsection{Co-planar Markers}
 
 The second method works under the assumption that all markers are co-planar.
 Since the WhyCode system can accurately and quickly determine the positions of the markers,
 this assumption allows the orientation of co-planar markers to be determined unambiguously,
 \textit{when 3 or more markers are detected simultaneously}.
+For each input image, the WhyCode algorithm identifies all markers and stores their positions.
+Additional code assumes that the markers are in a co-planar ``bundle'' and attempts to find the normal vector to the
+plane implied by the markers' locations using regression.
+
+This algorithm significantly reduces the number of discontinuities in the perception of the camera location,
+as shown in Figure \ref{figure:plane_uwn}.
+This comes at the computational cost of performing a regression to calculate the orientation of the plane at each frame.
+It also adds additional constraints: at least 3 co-planar (and non-colinear) markers must be visible at all times.
+This is problematic with a system such as WhyCode, which does not allow for embedding markers within other markers,
+because the required view area increases significantly to accommodate 3 markers simultaneously.
+
+\begin{figure}
+    \centering
+        \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{images/bundles.csv_figure_u}
+    \end{subfigure}
+
+    \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{images/bundles.csv_figure_w}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{images/bundles.csv_figure_n}
+    \end{subfigure}
+
+    \caption{Each of the components of the perceived camera translation for a ``bundle'' of co-planar 8-bit WhyCode markers with IDs 1, 10, and 17.
+    This algorithm significantly reduces the number of discontinuities.}
+    \label{figure:plane_uwn}
+\end{figure}
+
+\subsection{Conclusion}
+
+WhyCode, though a powerful and computationally efficient fiducial system, is not well-suited to the task of landing a drone with a gimbal-mounted camera.
+While the system provides accurate, efficient, and scalable position estimation, the ambiguities and discontinuities in its orientation estimation
+prevent the required pose transformations without prohibitively expensive algorithmic extensions or constraints.
