@@ -220,6 +220,9 @@ this assumption allows the orientation of co-planar markers to be determined una
 For each input image, the WhyCode algorithm identifies all markers and stores their positions.
 Additional code assumes that the markers are in a co-planar ``bundle'' and attempts to find the normal vector to the
 plane implied by the markers' locations using regression.
+The normal vector is used to calculate the pitch and roll components of the bundle's orientation.
+The yaw of the bundle is assigned to be the yaw of the markers, which is determined unambiguously from the ID.
+The position of the bundle is the average position of its constituent markers.
 
 This algorithm significantly reduces the number of discontinuities in the perception of the camera location,
 as shown in Figure \ref{figure:plane_uwn}.
@@ -230,7 +233,7 @@ because the required view area increases significantly to accommodate 3 markers 
 
 \begin{figure}
     \centering
-        \begin{subfigure}[b]{0.49\textwidth}
+    \begin{subfigure}[b]{0.49\textwidth}
          \centering
          \includegraphics[width=\textwidth]{images/bundles.csv_figure_u}
     \end{subfigure}
