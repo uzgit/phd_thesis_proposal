@@ -159,7 +159,9 @@ when the flip happens.
 The particularly dangerous data points are therefore the negative outliers in the early stages of the landing.
 Filtering is useful on the east component to reduce noise.
 Filtering is not essential on the up component because orientation flipping does not change the perceived height.
-Variance in the up component is simply considered noise.
+Variation in the up component is simply considered noise.
+In spite of the fluctuating raw and filtered values, the position estimate data can be used for precision landing,
+as demonstrated in Figure \ref{figure:px4_precland_trajectories} which shows the horizontal distance from the landing pad versus altitude for multiple such landings.
 
 \begin{figure}
     \center
@@ -180,3 +182,23 @@ Variance in the up component is simply considered noise.
     \caption{Unfiltered and filtered estimates of the landing pad's position during landing.}
     \label{figure:filtered_unfiltered_apriltag_24h10}
 \end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.49\textwidth]{px4_precland_trajectories}
+    \caption{Horizontal distance from the landing pad versus altitude for 3 PX4 precision landings using the filtered April Tag 24h10 system.
+    This graph should be read as if the drone is approaching from the right and moving left.}
+    \label{figure:px4_precland_trajectories}
+\end{figure}
+
+\subsection{Conclusion}
+
+Both the April Tag and WhyCon/WhyCode systems suffer from fundamental issues of orientation ambiguity.
+April Tag's more intricate structure makes its perception of orientation more robust than that of WhyCon/WhyCode,
+but it still does not eliminate the ambiguity entirely, and we can see the destructive consequences of this if the
+orientation is used in other calculations.
+Still, simple Kalman filtering can mitigate the issue enough that the system can be used for precision landing.
+Furthermore, the flexible layout of April Tag makes it a better choice for precision landing.
+The ability to embed concentric markers within each other is critical to maintaining a continuous view of the landing pad
+from both near and far,
+and the ability to change the number and layout of data bits allows users to adjust the markers according to their computational constraints.
