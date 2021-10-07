@@ -124,7 +124,8 @@ The definition is shown in Table \ref{table:apriltag_24h10_definition}, and the 
 {\color[HTML]{333333} d} & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} d} & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} d} & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} d} & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} d} & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} d} & {\color[HTML]{333333} d}
 \end{tabular}
     \vspace*{0.5cm}
-    \caption{Definition for the April Tag 24h10 family.}
+    \caption{Definition for the April Tag 24h10 family. Each square is marked by a letter representing its function.
+    Data squares are marked as `d,' white squares as `w,' black sqares as `b,' and unused squares as `x.'}
     \label{table:apriltag_24h10_definition}
 \end{table}
 
@@ -133,4 +134,49 @@ The definition is shown in Table \ref{table:apriltag_24h10_definition}, and the 
     \includegraphics[width=\textwidth]{tag24h10_mosaic_grey_background}
     \caption{The set of markers in the April Tag 24h10 family. The grey squares are not part of the marker definitions.}
     \label{figure:apriltag24h10}
+\end{figure}
+
+\subsection{Testing with PX4's Precision Land}
+
+April Tag is subject to orientation ambiguity, similar to the WhyCon/WhyCode markers mentioned in Section \ref{section:whycode_modifications}.
+When conducting an autonomous landing via a series of position setpoints, such as in the original thesis~\cite{joshua_master_thesis},
+the orientation ambiguity is not prohibitively destructive - essentially because the orientation is correct ``most of the time.''
+However, when using a method such as PX4's precision land function, a single orientation flip can make the landing fail.
+This is because the method involves approaching the landing pad horizontally first (facing the landing pad directly),
+and then descending vertically once the drone is adequately close.
+The algorithm assumes it has reached or surpassed the landing pad location once it gets a single erroneous pose estimate for the landing pad.
+
+One way around this issue is to simply filter the raw position estimate data with a Kalman filter, as shown in Figure \ref{figure:filtered_unfiltered_apriltag_24h10}.
+The red data points represent the raw data, and the blue, continuous line represents the filtered position estimate
+that is passed to the PX4 flight software.
+Since the drone approaches the landing pad head-on, the ``north'' component of the landing pad's position is typically
+the largest.
+(This is just to say that the landing pad is in front of the drone, not to the side.)
+Thus, filtering is most important in the case of the north component.
+If the orientation flips (thereby causing a sign flip in the position),
+the drone will think that it has already passed the landing pad, and will attempt to land wherever it happens to be
+when the flip happens.
+The particularly dangerous data points are therefore the negative outliers in the early stages of the landing.
+Filtering is useful on the east component to reduce noise.
+Filtering is not essential on the up component because orientation flipping does not change the perceived height.
+Variance in the up component is simply considered noise.
+
+\begin{figure}
+    \center
+    \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{images/landing_apriltag24h10_east}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{images/landing_apriltag24h10_north}
+    \end{subfigure}
+
+    \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{images/landing_apriltag24h10_up}
+    \end{subfigure}
+    \caption{Unfiltered and filtered estimates of the landing pad's position during landing.}
+    \label{figure:filtered_unfiltered_apriltag_24h10}
 \end{figure}
