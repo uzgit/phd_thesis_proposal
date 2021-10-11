@@ -1,0 +1,44 @@
+\section{Choice of Flight Software}
+\label{section:choice_of_flight_software}
+
+There are two general stages of testing in the context of drone control algorithms:
+testing in simulation and testing in the real world.
+Testing in simulation is an intuitive first step in testing,
+as it allows to test control algorithms without added logistical, time, or financial cost.
+It also provides an idealized world, free of complicating factors such as wind, battery life, noisy sensors, etc.,
+isolating the control algorithm as the only testing variable.
+However, simulation does not prove that a system works in real life.
+Therefore, after control algorithms have been proven to work in theory (simulation),
+they must prove themselves again in the real world, with all the implied complexities.
+
+ArduPilot and PX4 are key software packages that can be used for testing in simulation.
+Previous work in this project and in others have proven worthiness of PX4 and Gazebo in terms of simulated autonomous control.
+They have complete integration with both simulation environments that are of interest in the upcoming research:
+Gazebo and AirSim.
+Both softwares have APIs in Python, C++, and ROS.
+This research requires position control - and particularly body offset position control.
+This means that the drone must follow a position setpoint that is given in the coordinate frame
+that is centered on the drone's body and oriented with the same heading as the drone.
+The position setpoint is given in terms of ENU (East, North, Up)
+where East refers to the drone's right,
+North refers to the drone's front,
+and Up refers to the drone's top.
+The setpoint is given in meters, so a position setpoint of (E, N, U) = (-2, 1, -1)
+means that the drone should move 2 meters to the right,
+1 meter forward, and 1 meter down.
+In ArduPilot, this type of body offset position setpoint is technically supported,
+but the firmware translates the position setpoint
+directly to a GPS coordinate and relies on GPS for navigating to that place.
+PX4 works also offers an API for generating body offset position setpoints.
+in some cases the position setpoint must be translated into the NED (North, East, Down) frame,
+by simply switching the North and East components, and negating the Up component to form the Down component.
+In PX4, precision land setpoints are only supported in the coordinate frame centered on the drone's home (takeoff) position,
+and oriented due north, and the coordinate frame is referred to as \texttt{LOCAL\_NED}.
+For generating a body offset position setpoint, one therefore must add the current position and heading
+to the target position and heading, but otherwise it works in a similar way to the position setpoints.
+Both ArduPilot and PX4 also offers APIs for controlling a gimbal to aim cameras.
+In ArduPilot this can be done with an RC override command, where RC input can be programmatically generated and then
+forwarded to the output channels that control a gimbal.
+PX4 provides a more sophisticated \texttt{vmount} interface that controls the gimbal with possible (user-configurable) consideration
+of the orientation of the drone.
+
