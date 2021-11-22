@@ -13,29 +13,36 @@ Landing is a last, unsolved problem in autonomous multi-rotor drone flight.
 Many other tasks such as takeoff, waypoint-to-waypoint flight,
 and miscellaneous mission tasks (e.g.~collection of images and video) have been reliably automated.
 Yet, autonomous landing remains largely a manual task because of its inherently risky, sensitive nature.
-The critical result of this is that fully autonomous mission cycles are just out of reach with current technology, in most contexts - that is to say we cannot yet fully remove the human operator from the loop.
-Prior work towards autonomous multi-rotor landing has been subject to at least one of several disadvantages.
-Either it depends principally on GPS and is therefore subject to possibly fatal inaccuracy (especially in Iceland),
-it has relied on detection of special markers (known a priori) with a downward facing camera, (such that it may easily lose sight of the markers during approach and descent),
+The critical result of this is that fully autonomous mission cycles are just out of reach with current technology, in many contexts.
+Prior work towards autonomous multi-rotor landing has been subject to at least one of several disadvantages -
+either it depends principally on GPS and is therefore subject to possibly fatal inaccuracy (especially in Iceland),
+it has relied on detection of special markers (known a priori) with a downward facing camera (such that it may easily lose sight of the markers during approach and descent),
 it uses differences in pixel speed to deduce terrain topology (but therefore depends on motion),
 or it has depended on sophisticated ground stations to carry out the computationally expensive processing required for terrain analysis.
-The proposed research targets the problem of autonomous landing with the goal of creating an algorithm to reliably land multi-rotor drones with the following constraints: 1. having no prior knowledge of a landing site or GPS position, 2. executing in real time (in other words, with a critical deadline), and 3. using only the limited computational environment onboard a drone.
+The proposed research targets the problem of autonomous landing
+with the goal of creating an algorithm to reliably land multi-rotor drones
+with the following constraints:
+1. having no prior knowledge of a landing site or GPS position,
+2. executing in real time with a critical deadline, and
+3. using only the limited computational environment onboard a drone.
 
-Thus far, we have created and tested several drone platforms with 3 different flight control software stacks: ArduPilot, PX4, and DJI.
-These have provided a means of acclimitization to Iceland's environment and have revealed the challenges therein: low GPS accuracy, high/unpredictable winds, and the commonality of rain.
-While the problem of rain can be solved with waterproofing, and winds can be dealt with by using larger drone platforms, low GPS accuracy has proven to be a real obstacle.
+Thus far, we have created and tested several drone platforms with 3 different flight control software stacks (ArduPilot, PX4, and DJI),
+which have revealed many challenges of operating drones in Iceland: low GPS accuracy, unpredictable winds, and the commonality of rain.
+While a large, weatherproof drone system can withstand wind and rain, low GPS accuracy has proven to be a real obstacle.
 DJI drones and flight controllers have shown to vastly out-perform others in this regard, and thus provide a good base moving forward.
-Further, we have tested landing algorithms based on fiducial markers in simulation, but differing from previous work in that we mount the camera on a gimbal in order to allow it to track the marker, providing a larger detection range.
-This has involved the further devlopment of existing fiducial systems April Tag and WhyCode in order to optimize for execution on embedded hardware, and testing such systems in terms of their accuracy in orientation estimation.
-Finally, we have created a proof of concept of such algorithms on a physical platform, to show that fiducial systems can be used for autonomous landing in combination with gimbal-mounted cameras - the most common existing drone sensor - and in spite of inaccuracies in orientation estimation.
+Further, we have tested landing algorithms based on fiducial markers in simulation,
+but differing from previous work in that we use a gimbal-mounted camera to allow it to track the marker over time.
+This has involved the further development of existing fiducial systems (April Tag and WhyCode) to optimize for execution on embedded hardware,
+and to test the accuracy of their orientation estimation.
+Finally, we have created a proof of concept of such algorithms on a physical drone.
 
 Moving forward, we plan to expand on the following research questions:
 \textbf{RQ1.}~With what methods can a drone autonomously identify a safe, previously unknown landing site?
 \textbf{RQ2.}~What data do such methods require?
 \textbf{RQ3.}~How can such methods execute in real time, and in the power-limited environment of a drone?
 We hypothesize that
-\textbf{H1:}~a U-net, or variants such as Residual U-net with pre-/post-processing steps for image rectification and communication with flight control software will be able to recognize landing sights from drone sensor data.
-\textbf{H2:}~this data can be point clouds from LIDAR units or RGBD (image + depth) cameras, which are small enough to be embedded onto a drone.
+\textbf{H1:}~A U-net, or variants such as Residual U-net with pre-/post-processing steps for image rectification and communication with flight control software will be able to recognize landing sights from drone sensor data.
+\textbf{H2:}~This data can be point clouds from LIDAR units or RGBD (image + depth) cameras, which are small enough to be embedded onto a drone.
 \textbf{H3:}~An embedded TPU, GPU, or FPGA will be able to execute the method onboard a drone in real time.
 We plan to generate training/testing data sets of LIDAR/RGBD point clouds in AirSim,
 and collect further testing data sets from the real world using our existing drone platforms.
