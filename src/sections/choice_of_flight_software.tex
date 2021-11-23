@@ -38,7 +38,51 @@ For generating a body offset position setpoint, one therefore must add the curre
 to the target position and heading, but otherwise it works in a similar way to the position setpoints.
 Both ArduPilot and PX4 also offers APIs for controlling a gimbal to aim cameras.
 In ArduPilot this can be done with an RC override command, where RC input can be programmatically generated and then
-forwarded to the output channels that control a gimbal.
+forwarded to the output channels that control a gimbal,
+as if the software is controlling the gimbal via switches/sliders on the controller.
 PX4 provides a more sophisticated \texttt{vmount} interface that controls the gimbal with possible (user-configurable) consideration
 of the orientation of the drone.
 
+DJI flight control software (and corresponding hardware) are more suited to real world testing
+because of its greater stability and reliability.
+ArduPilot and PX4 are open source, so while they lack the profit motive and black-box nature of DJI,
+they also unfortunately lack its robustness in terms of flight capability.
+The most crucial result of this is the inability of such systems to enter an autonomous flight mode
+when GPS precision is low (i.e.~GDOP is high) which is the case nearly always in Iceland.
+Potential solutions include using RTK systems, but these require base stations, increasing the hardware complexity
+of the required system.
+They also require that the base station be enabled for some time before increasing GPS precision.
+By contrast, many DJI drones (those with external distance sensors) are stable in completely GPS-denied environments,
+and allow for autonomous control even in those circumstances.
+Additionally, DJI flight controllers can function in GPS mode with a higher GDOP,
+such that they allow autonomous flight with lower GPS quality, albeit with minor drift/inaccuracy.
+In this case, drones with ArduPilot or PX4 can even be subject to fly-offs (complete loss of control).
+
+In terms of their APIs that enable autonomous control, ArduPilot and PX4 offer more open interfaces
+with implementations in C++, Python, and ROS, and DJI offers a more closed solution with fewer options.
+However, the more open interfaces of ArduPilot and PX4 (via e.g.~MAVLink/PyMAVLink) are poorly documented
+and have occasional quirky/unexpected behavior that requires extra overhead efforts to address.
+For example, certain message/command attributes are sometimes ignored with no explanation in the documentation,
+and explanations can only sometimes be found in user forums (and may require independent verification).
+In some cases of aiming a gimbal at targets in PX4, there has even been destructive behavior
+where a change in the commanded gimbal tilt resulted in an unexpected and uncontrollable change in gimbal pan,
+with no explanation.
+This implies more development time in the best case, and crashes in the worst case.
+While DJI's API is more closed, it is better documented and does not exhibit such unexpected behavior in our experiments.
+Autonomous control of the drone and gimbal is available primarily through virtual stick inputs,
+wherein the companion board requests virtual control from the flight controller,
+and then can control the drone and gimbal by simulating user control inputs,
+which can correspond either to target velocities or positions.
+This allows for more intuitive autonomous control with high level checks, such as maintenance of obstacle avoidance.
+In terms of disadvantages, drones without a companion board \textit{must} interface via the Mobile SDK through either an iOS or Android app,
+which implies many constraints on methods of connection and transmission of data.
+For example, in the case of the autonomously landing DJI Spark, video from the drone needed to be compressed on the \textit{tablet}
+in an Android app, before wireless transmission to the companion board.
+However, in the case of custom drones which do include companion boards, the connection infrastructure and programming setup are more flexible and less constraining.
+
+Overall, ArduPilot and PX4 are perfect options in the case of simulation,
+since they are free and provide reliable control in idealized simulation environments,
+but they do not perform as well as similar DJI products in the non-idealized environment of Iceland.
+However, control methods developed in simulation with ArduPilot or PX4 can be ported with relative ease to DJI flight controllers in the real world.
+Therefore, we plan to use ArduPilot and PX4 for the first phase of testing (in simulation),
+and DJI products for real world testing.
