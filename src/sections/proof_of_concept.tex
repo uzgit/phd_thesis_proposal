@@ -1,0 +1,108 @@
+\section{Autonomous Landing Proof of Concept}
+
+The last part of the initial phase of this research has been to successfully develop a proof of concept
+of the autonomous landing algorithm on a physical drone, which was also the goal of the first part (in Section \ref{section:initial_hexacopters}).
+The crucial difference is that we have used a DJI Spark as the drone platform,
+which is stable enough to remain nearly still without human intervention,
+even in a GPS-denied environment.
+However, even though the proof of concept is successful,
+its implementation is significantly constrained because of its basis on the DJI Mobile SDK,
+as explained below.
+The DJI Mobile SDK is necessary because the DJI Spark has no companion board,
+but anticipated future drone systems will have a more ideal setup using the DJI Onboard SDK.
+
+\subsection{System Architecture}
+
+The system is outlined in Figure~\ref{figure:spark_architecture}.
+All data is transmitted from the Spark to its controller via a wireless connection.
+The controller interfaces with an Android tablet to expose the drone's data and API.
+The app must authenticate with DJI using a user-specific API key
+before it can communicate with the drone,
+which drives home the proprietary, block-box nature of the system.
+Importantly, after the app has successfully authenticated once, it can re-authenticate without
+an internet connection for some period of time,
+meaning that an internet connection is not required in the field.
+The Android app then receives data about the condition of the drone,
+including all flight data (e.g.~attitude, velocities, flight modes, etc.),
+and the video stream from the camera.
+The app periodically decodes bitmap frames from the video stream,
+compresses them into black-and-white .webp images,
+and transmits them over a WiFi connection to a companion board.
+The companion board then carries detects April Tags in the video frames,
+determines what action to take according to the control policy,
+instantiates a command message,
+and sends that command back to the app.
+The app then reads the command,
+creates a virtual stick input via the DJI SDK,
+updates the GUI to visually show the command,
+and sends the command to the drone.
+The drone then carries out the command.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/spark_architecture.drawio}
+    \caption{Data flow for the Spark autonomous landing system.}
+    \label{figure:spark_architecture}
+\end{figure}
+
+The virtual stick inputs simulate input as if it were coming from the controller.
+Each stick command can be in the interval $[-1, 1]$.
+The drone can interpret those stick commands as setpoints either for position or velocity.
+Since we are abstracting from position, we only use the velocity mode.
+Therefore, a command on the pitch stick of $1$
+means that the drone should move forward at its maximum velocity.
+
+\subsection{Results}
+
+The system is able to reliably land the drone without human intervention.
+\footnote{Autonomous landing demonstration video: \url{https://vimeo.com/manage/videos/646612738}}
+So far, we have tested it with April Tag 48h12 and April Tag 24h12 landing pads.
+As anticipated, the April Tag 24h12 tags are subject to somewhat common instances of orientation ambiguity,
+whereas the April Tag 48h12 tags are mostly free of orientation ambiguity.
+In the demonstration video, this orientation ambiguity appears as jittery control inputs from the companion board,
+as well as (sometimes) jittery behavior from the drone.
+Surprisingly - and fortunately - this behavior appears to be non-destructive in this case.
+
+The Android app has 5 sliders to control the drone:
+\begin{enumerate}
+    \item Pitch (translated to forward/backward speed)
+    \item Roll (translated to left/right speed)
+    \item Yaw (translated to yaw speed, i.e.~rotational speed in the Z axis)
+    \item Throttle (translated to vertical speed)
+    \item Gimbal Tilt (translated to gimbal tilt speed)
+\end{enumerate}
+As well as buttons to enable or disable virtual control in the flight controller,
+to command the drone to takeoff,
+and to command the drone to land (blindly).
+The app works just well enough to allow for basic testing of this proof of concept,
+but has only received minimal development efforts because it is almost pure overhead.
+Therefore, it crashes often.
+The proposed research will avoid the Mobile SDK and will therefore avoid the need for a custom app.
+However, subsequent app development can be the subject of a future project if necessary.
+Still, the app has worked well enough to allow for many autonomous landings.
+\footnote{The autonomous landing demonstration from the point of view of the app: \url{https://vimeo.com/manage/videos/646620944}}
+
+\subsection{Limitations and Implementation Quirks}
+
+The Mobile SDK architecture is not well-suited to this application for a number of reasons.
+First, there is only one wired connection on the tablet, meaning that at least one connection
+must be wireless - either the connection to the controller, or the connection to the companion board.
+The tablet is not fast enough to do April Tag image analysis on its own,
+and there would be significantly increased development efforts required to install April Tag
+on the tablet alone (so the companion board is required).
+Moreover, connecting the tablet to the controller via its WiFi interface incurs prohibitive latency
+as a result of the large amount of processing required.
+It is also prohibitively slow to connect two clients over the controller's WiFi simultaneously.
+Second, the frames of the video stream are available in bitmap format,
+and each frame is prohibitively large/slow to transmit over a wireless connection to the companion board.
+In order to transmit ``video'' in ``real time,'' the app converts bitmap frames to black and white,
+and then compresses them into .webp format with 10\% quality.
+This allows a framerate of about 6 Hz, with a delay in each frame of about 0.25 seconds,
+to be delivered to the companion board.
+Amazingly, this is enough to land the drone with reasonable accuracy.
+Third, the Spark requires a blind commitment in the last stage of landing
+- where the flight controller forces the gimbal to point directly forward,
+apparently to protect it from the ground since it has very close clearance.
+So, although the drone responds to commands during this phase of landing,
+the companion board cannot see the landing pad and therefore cannot generate commands
+for last minute correction.
