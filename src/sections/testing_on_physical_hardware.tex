@@ -1,1 +1,7 @@
 \section{Testing on Physical Hardware}
+
+The first phase of this testing is to port the high-performing networks from testing in simulation to the real hardware.
+So far, we are targeting our existing Google Coral Dev Board, which has an embedded TPU,
+and an NVIDIA Jetson Nano, which has an embedded GPU.
+We will implement the pre-/post-processing wrappers for rectification and command generation in the same way as in the testing in simulation,
+and instantiate the trained networks on the embedded hardware.
