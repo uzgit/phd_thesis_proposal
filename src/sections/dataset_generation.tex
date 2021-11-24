@@ -1,1 +1,49 @@
 \section{Data Set Generation}
+
+We will create a synthetic data set of LIDAR point clouds and RGBD images,
+and corresponding segmentation masks in AirSim,
+and we will collect similar data from the real world on a smaller scale (without segmentation masks).
+The labels for the data set will be ``safety masks'' which label each pixel
+The synthetic data will be labeled automatically using slow, detailed terrain analysis methods,
+and leveraging the segmentation masks in order to have a notion of \textit{material}.
+This is to say that, even though calm water may be flat (and therefore safe,
+according to its topology),
+it is obviously not a safe landing site and can be ruled out just by being water.
+Conversely, an area of grass that may appear rough is not necessarily a dangerous landing site.
+By using the segmentation masks in creating the labels,
+we hope to discriminate between potential landing sites on another level than simply topology.
+However, topology will be the principle way of determining the safety of a landing site,
+and the most important aspects will be to minimal roughness, minimal slant, and maximal size.
+So the ideal landing site will be a large, smooth, level area
+having the appearance of a ``safe'' material.
+
+We will use a consistent pipeline for processing and labeling the images,
+which will be similar to traditional image analysis.
+First, we will rectify the depth images before processing them,
+to remove inevitable sensor distortion.
+In reality, the distortion will not be entirely eliminated, but will be mitigated.
+We will record the orientation of the sensor when the image is collected,
+and then transform the depth image so that it is oriented vertically down.
+We will process the rectified image to generate at least two safety masks -
+one for topological safety and the other for material safety.
+Then we will combine these intermediate safety masks to create an overall mask,
+which will serve as the label.
+The exact sizes of the training and testing data sets have yet to be determined, and as such we will rather focus
+on creating a script to automatically generate data sets of specified sizes.
+The data sets will be taken from multiple simulated environments to try to give an unbiased
+sense of what possible good landing sites look like.
+
+The real world data will serve as a final testing set, which will give a notion of how well
+the synthetic data correspond to the real world.
+We will the label the real world data in a similar way to the synthetic data, with the exception
+that we will not have corresponding segmentation masks.
+Additionally, it is too time-consuming to create both the labels
+and segmentation masks by hand.
+As a result, we will have to take special care in evaluating the performance of the terrain
+classifiers on the real world data set.
+It is likely that we will not be able to simply consider how well the predicted mask
+matches the label.
+We anticipate that the terrain classifiers may have to be evaluated on real world data purely by
+the landing locations they select, in order to be feasible in terms of time and logistics.
+In this case, a human who is familiar with the surveyed area can mark landing locations
+as feasible or infeasible by hand.
