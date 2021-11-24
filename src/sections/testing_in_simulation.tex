@@ -1,1 +1,26 @@
 \section{Testing in Simulation}
+
+As the terrain classifiers will output a mask, we will have to post-process the data
+to make it compatible with an autonomous drone system.
+We will therefore create an output wrapper
+to find contiguous regions of high predicted safety (i.e.~estimated safety above
+some experimentally-determined threshold),
+and to track these regions over time.
+We will then select a region for landing, and create commands to direct the drone
+towards that region in a similar manner to the method outlined in Section \ref{section:proof_of_concept}.
+We will make no explicit estimate of the region's position relative to the drone in terms
+of real world distance,
+as this is unnecessary and requires more sophisticated wrappers which take into account the distortion
+parameters of the camera in order to associate pixels with physical points (as in the case of fiducial markers).
+It is simpler and more generalizable to different platforms to choose a safe landing region,
+calculate its centroid, normalize its coordinates to the interval $[-1,1]$
+based on the pixel dimensions of the camera/mask,
+and then convert these values to Virtual Stick inputs (in the case of a DJI flight controller),
+or to velocity setpoints (in the case of ArduPilot or PX4 in simulation).
+
+After creating the output wrapper, we will move to testing the networks in simulated environments
+in AirSim.
+We will use multiple environments - both those from which the training data originates,
+and also unfamiliar environments - to get an idea of the generalizability of the networks.
+These networks will be evaluated on the number of successful landings they execute in a number
+of different scenarios.
