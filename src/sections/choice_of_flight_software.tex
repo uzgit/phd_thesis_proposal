@@ -1,4 +1,4 @@
-\section{Choice of Flight Software}
+\section{Choice of Flight Software/Hardware and Drone Upgrades}
 \label{section:choice_of_flight_software}
 
 There are two general stages of testing in the context of drone control algorithms:
@@ -86,3 +86,12 @@ but they do not perform as well as similar DJI products in the non-idealized env
 However, control methods developed in simulation with ArduPilot or PX4 can be ported with relative ease to DJI flight controllers in the real world.
 Therefore, we plan to use ArduPilot and PX4 for the first phase of testing (in simulation),
 and DJI products for real world testing.
+
+We will change at least one of the hexacopter systems developed in the early part of this research to use either a
+DJI N3 or A3.
+These are the later versions of the Naza V2 and other DJI flight controllers which have been shown to provide stable
+GPS-based control in Iceland.
+The main difference between them and the current DJI flight controllers that we have is that the new ones support the
+Onboard SDK, and therefore allow customized programmatic control, in a similar way to the DJI Spark.
+However, we have enough room on our custom drone systems to embed significantly more hardware than the Spark has.
+We will carry out the real world tests and data collection with the upgraded drone(s).
