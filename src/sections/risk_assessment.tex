@@ -1,1 +1,56 @@
 \section{Risk Analysis}
+
+There is little risk in the synthetic data set generation, as we have already generated similar
+(albeit more basic) data sets in the past, and running AirSim does not pose any logistical risk or hazard.
+There is slight risk in collecting the real world data sets, from the ever-present risk of damage
+to equipment from crashes, to the difficulty in collecting data with high enough resolution and
+operating within the motion/distance constraints of the sensors.
+To mitigate this, we will run several missions to collect real world data over a long period of time,
+so that our method of collecting and tagging the data can be refined.
+
+We anticipate that the terrain classifier creation should pose little risk, in that it should be
+feasible to create classifiers that give the desired results on the training data.
+This is justified by the fact that the types of networks we will be training have been shown to
+perform well in a variety of similar classification tasks.
+However, there is the risk that the bulk of the training data, being synthetic, will not adequately
+represent the real world.
+This would mean that the terrain classifiers can perform well in simulation
+but not in the real world.
+We cannot mitigate this risk by only using real world data because of the time and effort
+required to label the data.
+We can attempt to mitigate it by generating synthetic data from simulated environments that are
+similar to the environment where we will be testing - i.e.~by limiting the scope of the data
+to environments similar to Iceland, instead of using e.g.~tropical environments,
+or contrived environments that do not represent the real world at all.
+Additionally, we can use human-made post-processing wrappers to handle undesired behavior -
+e.g.~selecting conservatively from the safe landing regions that the network identifies.
+
+Testing in simulation will have low risk, as AirSim already has plugins for both ArduPilot and PX4,
+as well as drone models that can fly autonomously in the simulation.
+This step will mostly consist of integrating existing components with the terrain classifiers and
+pre-/post-processing wrappers.
+
+The first part of testing on physical platforms (in a lab setting), poses low risk.
+Creating the infrastructure to transfer data to an external board is not difficult,
+and measuring the framerate and power consumption is also not difficult.
+There is a risk in the case that none of the terrain classifiers can run fast enough,
+or with sufficiently little power consumption, on our particular hardware platforms.
+In this case we will need to consider getting different platforms, but at the very least we will
+have collected relevant and helpful data on the computational requirements of the terrain classifiers.
+
+Testing the system for real world landings is the most risky part of the research,
+not just in terms of logistical considerations and potential of crashes,
+but also in that it depends on the high performance of the systems developed in the previous steps,
+and also on their integration together in a single system.
+The biggest risk that we anticipate is that the training data does not correspond well enough to the
+real world for the system to properly identify safe landing sites.
+Although we will try several ways to mitigate this risk, it cannot be entirely eliminated.
+However, in the case that the synthetic data do not transfer to the real world,
+we have a two-pronged basis on which to move forward.
+First, we will have already conducted research on the types of network architectures,
+sensor data, and pre-/post-processing wrappers that perform well in simulation,
+and we will still be able to use these.
+Second, we will have physical drone platforms that we can use to collect more real-world data,
+and we can label this data according to simple, slow, human-made methods,
+without considering segmentation masks.
+Then, we can re-train the networks that we have on purely real-world data.
