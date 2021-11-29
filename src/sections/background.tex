@@ -11,8 +11,36 @@ while DJI software and drones are typically used for consumer/commercial tasks.
 ArduPilot and PX4 communicate using the same open source, customizable protocol - MAVLink~\cite{mavlink_io} -
 which has APIs in many different programming languages as well as with \gls{ROS}.
 
-\subsection{Simulation Software}
-
 \subsection{Robotics Software}
 
+\gls{ROS} is a common framework for robotics software that faciliates communication, interactivity, and compatibility
+between cooperating software modules.
+It uses a Publisher/Subscriber model of message passing to allow concurrent programs to communicate,
+and even provides infrastructure for communication between threads running on different hardware platforms.
+Within the ROS universe are open-source, ready-built tools that are fundamental to common robotics tasks,
+such as interfaces to many different sensors and cameras,
+modules for rectification, compression, and transmission of images and point clouds,
+PID controllers,
+coordinate system tranforms,
+and much more.
+ROS provides a structured means of generating modular solutions to complex robotics problems.
+
+\subsection{Simulation Software}
+
+Simulation allows robotics developers to test algorithms quickly without logistical concerns such as
+weather, transportation, damage to hardware, etc.
+Gazebo is one of the most common robotics simulators and provides a physics engine,
+many simulated worlds and models of items/vehicles,
+integration with many robotics tools,
+and~-~importantly~-~lots of user-generated content, software plugins, and information.
+It has integration with ROS, so that simulated sensors and actuators can provide data and take commands
+from ROS modules.
+This allows developers to analyze the behavior of their robots during development cheaply and quickly.
+Additionally, Gazebo has integration with both PX4 and ArduPilot which, combined with existing (and free)
+drone models, can be used to simulate autonomous drone control algorithms in depth.
+AirSim is another robotics simulator, but it focuses on providing accurate physics and graphics
+and is therefore a heavier software package.
+It also has integration with ArduPilot and PX4, so that 
+
 \subsection{Fiducial Markers}
+
