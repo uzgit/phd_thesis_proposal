@@ -1,2 +1,21 @@
 \section{Experiments with AirSim}
 
+AirSim~\cite{airsim2017fsr} is a ``high-fidelity visual and physical simulator for autonomous vehicles."
+It provides realistic worlds for drones and cars, onto which virtual sensors (e.g.~LIDAR, RGB cameras) can be embedded.
+The sensor attributes, such as distortion parameters, field/depth of view, sensor type, etc.,
+are configurable such that they can closely imitate real sensors.
+A Python API provides a way to programmatically control object positions and to extract sensor data,
+making it easy to quickly and automatically generate large data sets.
+AirSim also provides ``segmentation masks'' which label the pixels of each of the sensor images according to the
+object to which the pixel belongs.
+This makes it possible to automatically generate object masks, for example, so that a neural network can learn
+to recognize a specific object.
+
+We have used AirSim to programmatically generate datasets in the Linemod format for training PoseCNN~\cite{posecnn}
+and EfficientPose~\cite{efficientpose} networks to recognize object poses in 6 degrees of freedom.
+This involved programmatically moving an object to a randomized location with a randomized rotation within a scene
+and extracting RGB images and corresponding segmentation masks.
+The networks were trained on the synthetic Linemod data set for a short time and achieved low accuracy,
+as the main objective of this task was not to generate high-performing pose recognition networks,
+but rather to test a pipeline for dynamically generating large, labeled data sets for anticipated
+research outlined in Section~\ref{section:dataset_generation}.
