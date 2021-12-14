@@ -50,15 +50,15 @@ The virtual stick inputs simulate input as if it were coming from the controller
 Each stick command can be in the interval $[-1, 1]$.
 The drone can interpret those stick commands as setpoints either for position or velocity.
 Since we are abstracting from position, we only use the velocity mode.
-Therefore, a command on the pitch stick of $1$
+Therefore, a command of $1$ on the pitch stick
 means that the drone should move forward at its maximum velocity.
 
 \subsection{Results}
 
 The system is able to reliably land the drone without human intervention.
 \footnote{Autonomous landing demonstration video: \url{https://vimeo.com/manage/videos/646612738}}
-So far, we have tested it with April Tag 48h12 and April Tag 24h12 landing pads.
-As anticipated, the April Tag 24h12 tags are subject to somewhat common instances of orientation ambiguity,
+So far, we have tested it with April Tag 48h12 and April Tag 24h10 landing pads.
+As anticipated, the April Tag 24h10 tags are subject to somewhat common instances of orientation ambiguity,
 whereas the April Tag 48h12 tags are mostly free of orientation ambiguity.
 In the demonstration video, this orientation ambiguity appears as jittery control inputs from the companion board,
 as well as (sometimes) jittery behavior from the drone.

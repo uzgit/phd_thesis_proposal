@@ -37,6 +37,12 @@ There is a risk in the case that none of the terrain classifiers can run fast en
 or with sufficiently little power consumption, on our particular hardware platforms.
 In this case we will need to consider getting different platforms, but at the very least we will
 have collected relevant and helpful data on the computational requirements of the terrain classifiers.
+In the case that we both cannot generate networks that run fast enough on our hardware,
+and we simultaneously cannot obtain sufficiently fast platforms,
+we can still use sophisticated ground-based hardware for real time performance
+(similar to the system architecture in the proof of concept),
+and make incremental improvements in efficiency.
+However, in this case we will have to give up the goal of running our solutions purely onboard the drone.
 
 Testing the system for real world landings is the most risky part of the research,
 not just in terms of logistical considerations and potential of crashes,

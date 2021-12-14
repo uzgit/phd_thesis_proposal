@@ -52,3 +52,17 @@ which can be anywhere from a few centimeters to a few meters.
 In the available open source autopilot softwares,
 obstacles are simply not handled,
 and drones will continue their landing attempts even if fatally obstructed.
+A proven alternative to depending on GPS for landing is to provide additional infrastructure at the landing area
+to help the drone navigate reliably, e.g.~IR beacons, fiducial markers, or even ground-based cameras that identify and direct the drone.
+However, this paradigm requires additional overhead, in that the landing site should be sophisticated and known ahead of time.
+
+Some methods for autonomous landing employ in-depth topological analysis of the environment,
+which are computationally- and power-intensive.
+Due to the hardware onboard most drones, which is limited in terms of power and computational performance,
+it is often necessary to stream data from the drone to a more powerful ground station to carry out this analysis.
+However, this adds the requirement of a two-way data link between the drone and the ground station,
+which limits the range of the drone, adds potentially prohibitive latency, and increases operational overhead.
+
+Therefore, the goal of this research is to determine which methods a drone can use for autonomous landing in unknown environments,
+to determine the data those methods require, and to determine how those methods can execute onboard a drone in real time.
+We aim to implement at least one of these methods on a drone and demonstrate it as a real world proof of concept.
