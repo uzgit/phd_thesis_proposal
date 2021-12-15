@@ -12,36 +12,47 @@ Therefore, after control algorithms have been proven to work in theory (simulati
 they must prove themselves again in the real world, with all the implied complexities.
 
 ArduPilot and PX4 are key software packages that can be used for testing in simulation.
-Previous work in this project and in others have proven worthiness of PX4 and Gazebo in terms of simulated autonomous control.
+Previous work in this project and in others have proven worthiness of ArduPilot/PX4 and Gazebo in terms of simulated autonomous control.
 They have complete integration with both simulation environments that are of interest in the upcoming research:
 Gazebo and AirSim.
-Both softwares have APIs in Python, C++, and ROS.
-This research requires position control - and particularly body offset position control.
-This means that the drone must follow a position setpoint that is given in the coordinate frame
-that is centered on the drone's body and oriented with the same heading as the drone.
-The position setpoint is given in terms of ENU (East, North, Up)
-where East refers to the drone's right,
-North refers to the drone's front,
-and Up refers to the drone's top.
-The setpoint is given in meters, so a position setpoint of (E, N, U) = (-2, 1, -1)
-means that the drone should move 2 meters to the right,
-1 meter forward, and 1 meter down.
-In ArduPilot, this type of body offset position setpoint is technically supported,
-but the firmware translates the position setpoint
-directly to a GPS coordinate and relies on GPS for navigating to that place.
-PX4 works also offers an API for generating body offset position setpoints.
-in some cases the position setpoint must be translated into the NED (North, East, Down) frame,
-by simply switching the North and East components, and negating the Up component to form the Down component.
-In PX4, precision land setpoints are only supported in the coordinate frame centered on the drone's home (takeoff) position,
-and oriented due north, and the coordinate frame is referred to as \texttt{LOCAL\_NED}.
-For generating a body offset position setpoint, one therefore must add the current position and heading
-to the target position and heading, but otherwise it works in a similar way to the position setpoints.
-Both ArduPilot and PX4 also offers APIs for controlling a gimbal to aim cameras.
-In ArduPilot this can be done with an RC override command, where RC input can be programmatically generated and then
-forwarded to the output channels that control a gimbal,
-as if the software is controlling the gimbal via switches/sliders on the controller.
-PX4 provides a more sophisticated \texttt{vmount} interface that controls the gimbal with possible (user-configurable) consideration
-of the orientation of the drone.
+Both softwares have APIs in Python, C++, and ROS,
+and both offer positional/velocity control in several coordinate frames.
+They also offer methods of controlling external actuators (e.g.~servos, gimbals, etc) programmatically.
+This means that both systems are technically able to accomplish all the necessary tasks.
+Since they are free, open source, and easy to integrate into other important software, they are ideal for testing in simulation.
+In the real world, however, these autopilots exhibit quirks that are seemingly a lack of quality control
+stemming from their open source nature.
+For example, the \texttt{vmount} command of PX4, which controls a gimbal, can sometimes actuate unpredictably
+in the \textit{pan} axis when given only a command in the \textit{tilt} axis from the Python API PyMAVLink.
+They both have trouble maintaining stable autonomous flight in Iceland when using only conventional GPS modules,
+since GDOP is often high in Iceland (meaning that GPS precision is low).
+Attempting to fly in autonomous mode in this case can result in ``fly-offs'' where the drone flies away uncontrollably.
+Moreover, since there is a whole world of sensors that can interface with both ArduPilot and PX4,
+there is also a whole world of meandering setup procedures (with questionable documentation) and potential problems with each of them,
+and with each of their combinations.
+For example, we have already bought a Cube Orange autopilot (supported by both ArduPilot and PX4) to replace the
+Wookong flight controller on the heavy-lift drone mentioned in Section~\ref{section:ir_drone}.
+We have planned to run PX4 on it, and use the Here3 RTK GPS system via its CAN interface.
+However, according to the setup instructions~\cite{here3_manual},
+we must first install ArduPilot solely to set a CAN ID for the GPS, before re-installing PX4.
+In a worse case, a LIDAR rangefinder (used to accurately detect drone altitude) that was thought to be compatible with
+ArduPilot, was eventually found and documented to have unpredictable 13-meter jumps in detected altitude~\cite{lidar_lite_rangefinder}:
+\begin{quote}
+    When the problem happens the 13m offset usually locks in place,
+    so all remaining readings from the Lidar for the rest of the flight will give a 13m offset.
+    There have however been cases where the 13m offset disappears after a few seconds or minutes.
+\end{quote}
+This issue is indicative of many issues within the world of ArduPilot and PX4.
+While it is not a prohibitive issue that a single sensor might be learned to have serious problems with a particular flight control software/setup,
+it adds to both the uncertainty and overhead in performance verification when creating drone systems.
+Finally, there is a set of ground control stations (software to provide an interface for monitoring and controlling a drone)
+for ArduPilot and PX4, consisting mostly of Mission Planner, QGroundControl, and APM Planner.
+These are free and generally perform their necessary tasks, but are well-known to be glitchy
+and incompatible with certain autopilot versions.
+In short, drone systems based on ArduPilot or PX4 require a slow testing phase of their basic functionality
+before they can be considered reliable enough for testing autonomous navigation techniques such as those in the focus of this research.
+On the other hand, there is a large user base that is consistently exploring the space of available system setups with this software,
+meaning that issues can often be detected and communicated relatively quickly.
 
 DJI flight control software (and corresponding hardware) are more suited to real world testing
 because of its greater stability and reliability.
@@ -56,19 +67,9 @@ By contrast, many DJI drones (those with external distance sensors) are stable i
 and allow for autonomous control even in those circumstances.
 Additionally, DJI flight controllers can function in GPS mode with a higher GDOP,
 such that they allow autonomous flight with lower GPS quality, albeit with minor drift/inaccuracy.
-In this case, drones with ArduPilot or PX4 can even be subject to fly-offs (complete loss of control).
-
-In terms of their APIs that enable autonomous control, ArduPilot and PX4 offer more open interfaces
-with implementations in C++, Python, and ROS, and DJI offers a more closed solution with fewer options.
-However, the more open interfaces of ArduPilot and PX4 (via e.g.~MAVLink/PyMAVLink) are poorly documented
-and have occasional quirky/unexpected behavior that requires extra overhead efforts to address.
-For example, certain message/command attributes are sometimes ignored with no explanation in the documentation,
-and explanations can only sometimes be found in user forums (and may require independent verification).
-In some cases of aiming a gimbal at targets in PX4, there has even been destructive behavior
-where a change in the commanded gimbal tilt resulted in an unexpected and uncontrollable change in gimbal pan,
-with no explanation.
-This implies more development time in the best case, and crashes in the worst case.
-While DJI's API is more closed, it is better documented and does not exhibit such unexpected behavior in our experiments.
+Moreover, DJI flight controllers function well as plug-and-play items,
+requiring minimal setup while offering good stability and reliability.
+While DJI's API is more closed, it is well-documented and does not exhibit unexpected behavior in our experiments.
 Autonomous control of the drone and gimbal is available primarily through virtual stick inputs,
 wherein the companion board requests virtual control from the flight controller,
 and then can control the drone and gimbal by simulating user control inputs,
@@ -79,14 +80,26 @@ which implies many constraints on methods of connection and transmission of data
 For example, in the case of the autonomously landing DJI Spark, video from the drone needed to be compressed on the \textit{tablet}
 in an Android app, before wireless transmission to the companion board.
 However, in the case of custom drones which do include companion boards, the connection infrastructure and programming setup are more flexible and less constraining.
+DJI also provides several Android and iOS apps that allow for stable, reliable control of their drones.
+There are also several free and open source code samples available from DJI so that users can create their own
+such applications, as we have done in Section~\ref{section:proof_of_concept}.
+However, DJI systems are often vastly more expensive than their open source counterparts,
+they present logistical challenges in getting them to Iceland,
+and their proprietary, black-box nature means that they can be unpredictably discontinued or their functionality can be prohibitively changed.
 
 Overall, ArduPilot and PX4 are perfect options in the case of simulation,
-since they are free and provide reliable control in idealized simulation environments,
-but they do not perform as well as similar DJI products in the non-idealized environment of Iceland.
+since they are free and provide reliable control in idealized simulation environments.
 However, control methods developed in simulation with ArduPilot or PX4 can be ported with relative ease to DJI flight controllers in the real world.
-Therefore, we plan to use ArduPilot and PX4 for the first phase of testing (in simulation),
-and DJI products for real world testing.
+Although DJI has a proprietary simulator, it does not offer the realistic graphics and simulation that AirSim does,
+and is not as versatile as Gazebo.
+Therefore, we plan to use ArduPilot and PX4 for the first phase of testing (in simulation).
 
+We still have more testing and development to do in order to develop reliable drones for real world testing,
+and we will pursue both the open source and DJI routes.
+We will test and improve our own drone systems to use the Cube Pilot Orange with RTK,
+hoping that it will provide sufficient stability for autonomous testing.
+We will also expand by using optical flow and LIDAR sensors on our custom drone sensors,
+which should give more reliable position/velocity control.
 We will change at least one of the hexacopter systems developed in the early part of this research to use either a
 DJI N3 or A3.
 These are the later versions of the Naza V2 and other DJI flight controllers which have been shown to provide stable
