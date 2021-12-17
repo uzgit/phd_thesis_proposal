@@ -15,11 +15,11 @@ autonomous, unstructured drone landing.
 Current autonomous landing methods have at least one of the following disadvantages:
 they are blind to obstacles,
 they require previously \textit{known} landing sites,
-they depend on sophisticated ground control stations for offloading of expensive computation.
-This proposed research targets a gap in current autonomous landing methods.
+or they depend on sophisticated ground control stations for offloading of expensive computation.
+The proposed research targets a gap in current autonomous landing methods.
 Specifically, we aim to develop a method for quickly analyzing terrain
 and identifying safe landing sites using only embedded computational hardware
-and a minimal set of sensors.
+and a minimal set of sensors (and then carry out the landing).
 
 Landing is a particularly difficult aspect of drone flight,
 owing mainly to its risky nature and required precision.
@@ -27,8 +27,8 @@ As a result, most drone landings are carried out by
 (or under the supervision of)
 a human operator,
 inherently limiting the applicability of autonomous drones.
-Some autopilot software includes an \gls{API} for \textit{precision landing},
-which allows a drone to localize and direct itself with respect to a landing pad during an autonomous landing,
+Some autopilot software includes an API for \textit{precision landing},
+which allows a drone to localize and direct itself with respect to a target landing location during an autonomous landing,
 according to data provided by external sensors and programs.
 However, there is no particular method of autonomous landing in widespread use.
 As autonomous and semi-autonomous drones are not able to reliably handle landings

@@ -4,18 +4,18 @@ We will train, test, and evaluate multiple neural networks in their ability to p
 ``correct'' safety mask of the landing sites in the synthetic data sets.
 We will focus first on using U-nets to map from the input LIDAR or RGBD image
 to the output mask, as they have been proven to be good classifiers in many different scenarios,
-from terrain analysis, to tissue analysis, to road identification, etc.
+from terrain analysis~\cite{unet_semantic_terrain_segmentation}, to medical image segmentation~\cite{unet_medical_image_segmentation}, to road identification~\cite{unet_road_extraction}, etc.
 We anticipate that the main challenge in this domain will not be
 to train the networks, but rather to keep them small enough
 so that they can execute quickly on embedded hardware.
 Nevertheless, we will start by focusing strictly on maximizing the ability of the networks
-to accurately predict the safety masks.
+to accurately predict the safety masks, and we will focus on optimization in later steps.
 
 As an example of how this will work, we take an example from my project in RU's Deep Learning
 course, wherein my group member and I used a Residual U-net to classify defects
 in manufactured steel.
 More than 17,000 images were labeled by hand, according to which of 4 defects they contained.
-Figure \ref{figure:steel_defect_images} shows an example of the input data from this project,
+Figure~\ref{figure:steel_defect_images} shows an example of the input data from this project,
 where the yellow and blue outlines show the locations of different types of defect areas.
 
 \begin{figure}
@@ -30,7 +30,7 @@ where the yellow and blue outlines show the locations of different types of defe
 
 This particular project was very time-limited, so the network trained for only 4 epochs,
 but was able to achieve about 50\% prediction accuracy in that time,
-and its output for an example image can be seen in Figure \ref{figure:example_steel_prediction}.
+and its output for an example image can be seen in Figure~\ref{figure:example_steel_prediction}.
 This project also gave some insight into accuracy metrics that can help bias the output
 for/against false positives/negatives.
 For example, in the case of the steel defect recognition, we used a Tversky metric to
@@ -43,7 +43,7 @@ Conversely, in the case of autonomous drones,
 we would like the networks to be conservative in their identification of safe landing sites,
 so that they never direct the drone to land in unsafe landing sites, even though they may reject
 some landing sites that are actually safe.
-This is purely to give an intuition of the form of the problem we will use the classifiers to solve.
+This example serves purely to give an intuition of the form of the problem we will use the classifiers to solve.
 
 \begin{figure}
     \centering
@@ -56,6 +56,8 @@ This is purely to give an intuition of the form of the problem we will use the c
     \subfloat[Defect 3 Prediction]{\includegraphics[width = 0.5\textwidth]{images/pred_def2.png}}\\
     \subfloat[Defect 4 Mask]{\includegraphics[width = 0.5\textwidth]{images/true_def3.png}}
     \subfloat[Defect 4 Prediction]{\includegraphics[width = 0.5\textwidth]{images/pred_def3.png}}
-    \caption{A visualization of the network's performance in predicting defects.}
+    \caption{A visualization of a residual U-net's performance in predicting defects in manufactured steel after being trained with human-created labels.
+    This problem is similar in form to our upcoming problem of identifying safe landing sites - given an input image,
+        the network must classify specific regions according to their characteristics.}
     \label{figure:example_steel_prediction}
 \end{figure}

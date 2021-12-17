@@ -15,7 +15,7 @@ which has APIs in many different programming languages as well as with \gls{ROS}
 
 \gls{ROS} is a common framework for robotics software that faciliates communication, interactivity, and compatibility
 between cooperating software modules.
-It uses a Publisher/Subscriber model of message passing to allow concurrent programs to communicate,
+It uses a Publisher/Subscriber model of to allow concurrent programs to communicate,
 and even provides infrastructure for communication between threads running on different hardware platforms.
 Within the ROS universe are open-source, ready-built tools that are fundamental to common robotics tasks,
 such as interfaces to many different sensors and cameras,
@@ -36,7 +36,7 @@ and~-~importantly~-~lots of user-generated content, software plugins, and inform
 It has integration with ROS, so that simulated sensors and actuators can provide data and take commands
 from ROS modules.
 This allows developers to analyze the behavior of their robots during development cheaply and quickly.
-Additionally, Gazebo has integration with both PX4 and ArduPilot which, combined with existing (and free)
+Additionally, Gazebo has integration with both PX4 and ArduPilot, which, combined with existing (and free)
 drone models, can be used to simulate autonomous drone control algorithms in depth.
 AirSim is another robotics simulator, but it focuses on providing accurate physics and graphics
 and is therefore a heavier software package.
@@ -47,7 +47,7 @@ AirSim, there are already several configurable sensors and drone models that are
 For example, there are cameras and LIDAR sensors that are configurable to specific parameters,
 such as distortion parameters, resolution, field of view, etc.
 These make it possible not only to test navigation algorithms with realistic, dynamic data,
-but also make it possible to efficiently and quickly generate synthetic data sets for training
+but also make it possible to quickly generate large synthetic data sets for training
 deep learning networks.
 Several projects have succeeded in training such networks to, in the context of drones,
 detect and avoid crowds~\cite{crowd_detection_airsim},
@@ -98,11 +98,11 @@ which can be used to train networks in object identification.
 \end{figure}
 
 Fiducial markers are patterns whose pose (position + orientation) can be recognized
-using only a monocular image and the camera parameters.
+using only a monocular image and the intrinsic parameters of the camera that takes the picture.
 Figure~\ref{figure:fiducial_markers} shows some common fiducial markers.
 They can also provide a small bit of data, such as an identifier.
-Often, fiducial markers are used to mark objects, so that the pose of the object itself
-can be used to deduce the pose of the object it is attached to.
+Fiducial markers are often attached to objects,
+such that they allow the pose of the object to be easily identified as well.
 A common application of this is to allow a robot to locate and manipulate items.
 Although the position of a fiducial marker is conceptually easy to determine from
 a single monocular image, the orientation is subject to ambiguity

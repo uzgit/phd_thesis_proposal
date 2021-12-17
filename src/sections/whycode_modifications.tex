@@ -4,15 +4,15 @@
 \subsection{Background}
 
 The WhyCon fiducial marker, shown in Figure \ref{fig:whycon} consists of a white circle inside of a larger black circle.
-The identification algorithm is computationally simple:
+The identification algorithm~\cite{whycon_paper}\cite{whycode_paper} is computationally simple:
 \begin{itemize}
-    \item An input image is searched for white regions.
+    \item The detector searches an input image for white regions.
     \item The detector flood-fills and determines a measure of circularity for each white region.
     \item The detector seeks a black region directly outside of each white region, flood fills it, and determines a measure of circularity for it.
-    \item The circularity measures are compared, and the white/black region combination is called a WhyCon marker if it is adequately circular (under projection).
+    \item The circularity measures are compared, and the white/black region combination is considered a WhyCon marker if it is adequately circular under projection, according to user-specified threshold.
     \item The position of the marker is determined using the pinhole model of a monocular camera with known intrinsic parameters
             (pixel resolution, lens distortion, principal points, focal lengths), and the diameter of the marker.
-    \item The major and minor axes of the elliptical regions provide a basis from which to determine the marker's orientation.
+    \item The major and minor axes of the elliptical regions provide a basis on which to determine the marker's orientation.
 \end{itemize}
 
 The WhyCon software's purpose is to determine the pose (position \textit{and} orientation) of detected WhyCon markers
@@ -37,7 +37,7 @@ Figure \ref{fig:rotationally_symmetric_whycode_markers} shows potential collisio
 rotationally symmetric but have different IDs.
 While it is impossible to distinguish between rotationally symmetric markers, this problem can be overcome by bit-shifting
 the ID's binary string to its lowest value in all cases before determining the ID.
-This also gives a means of determining a ``yaw origin'' so that the orientation of the marker can be determined in 3 dimensions.
+This also gives a means of determining a ``yaw origin'' so that the orientation of the marker can be determined in 3 dimensions~\cite{whycode_paper}.
 
 \begin{figure}
     \centering
@@ -68,7 +68,7 @@ that satisfy the assumption that the marker is facing the camera,
 and it is difficult to determine which of these candidates represents reality,
 especially when the marker is normal or near-normal to the camera's field of view.
 The original WhyCode software~\cite{LCAS_whycon} arbitrarily chooses the first solution as correct,
-and as such it does not need much analysis except to say that it has a high likelihood of choosing the wrong solution.
+and as such it has a high likelihood of choosing the wrong solution.
 
 In the context of fiducial-based drone landing, the issue of orientation ambiguity affects a drone's ability to
 estimate its own pose when its camera is mounted on a gimbal.
@@ -78,7 +78,8 @@ While a control signal may communicate a \textit{target} orientation,
 many gimbals have their own IMU and take into account angular motion and acceleration in addition to a control signal.
 Therefore, it is difficult to determine the orientation of the gimbal simply based on its control signals.
 Without the orientation of either the fiducial marker \textit{or} the gimbal, more assumptions about
-the landing scenario are required, such as (for example) that the camera is facing directly down always.
+the landing scenario are required, such as (for example) that the camera is facing directly down always,
+which was the main assumption in related projects.
 
 When a drone uses a fiducial marker to determine its position with respect to a landing pad without the assumption
 that its camera is in a fixed orientation, it can (theoretically) use the marker's perceived orientation instead.
@@ -122,7 +123,7 @@ owing to the distortion caused by the camera lens.
 The rationale for the method is that the correct solution should predict the ellipse to be in its correct place,
 minimizing the variance in the number of sample points that coincide with each tooth.
 Conversely, the incorrect solution should predict the ellipse to be in the incorrect place,
-and therefore fewer sample points should coincide with teeth one side, increasing the variance.
+and therefore fewer sample points should coincide with teeth on one side, increasing the variance.
 This provides a baseline on which to disambiguate the solutions, but does not reliably choose the correct one,
 especially as the candidate solutions get closer and closer and the marker becomes more and more normal to the camera.
 
@@ -176,7 +177,6 @@ and leverages the fact that camera distortion increases (and therefore predictio
 
 The method does decrease the number of discontinuities in the perceived camera location, as shown in Figure \ref{figure:ellipse_sampling_uwn},
 at the cost of significantly more sample points (more than double the original number).
-Unfortunately, it does not eliminate the discontinuities enough to justify the additional computational requirements.
 
 \begin{figure}
     \centering
@@ -184,7 +184,7 @@ Unfortunately, it does not eliminate the discontinuities enough to justify the a
     \caption{Example of sampling WhyCode markers on the radial edges of the teeth.
     The black/blue circle illustrates ID sampling locations, with the bluest samples occurring first, and blackest samples occuring last.
     Each of the blue/white radial line segments illustrates the sampling of the predicted edges of the teeth.
-    The method chooses that solution that minimizes the variances of the ratio of blue to white on these line segments.
+    The method chooses the solution that minimizes the variances of the ratio of blue to white on these line segments.
     }
     \label{figure:ellipse_sampling}
 \end{figure}
@@ -255,6 +255,7 @@ because the required view area increases significantly to accommodate 3 markers 
 
 \subsection{Conclusion}
 
-WhyCode, though a powerful and computationally efficient fiducial system, is not well-suited to the task of landing a drone with a gimbal-mounted camera.
-While the system provides accurate, efficient, and scalable position estimation, the ambiguities and discontinuities in its orientation estimation
-prevent the required pose transformations without prohibitively expensive algorithmic extensions or constraints.
+WhyCode is often subject to severe orientation ambiguity.
+However, with some modifications or constraints it can overcome the orientation ambiguity to a large extent.
+Since it is so simple and computationally efficient, the methods to overcome the orientation ambiguity can be computationally expensive,
+while still allowing the system to perform relatively quickly.

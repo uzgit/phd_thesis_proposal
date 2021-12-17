@@ -2,7 +2,7 @@
 \label{section:proof_of_concept}
 
 The last part of the initial phase of this research has been to successfully develop a proof of concept
-of the autonomous landing algorithm on a physical drone, which was also the goal of the first part (in Section \ref{section:initial_hexacopters}).
+of the initial autonomous landing algorithm on a physical drone (developed in the master thesis~\cite{joshua_master_thesis}), which was also the goal of the first part (in Section~\ref{section:initial_hexacopters}).
 The crucial difference is that we have used a DJI Spark as the drone platform,
 which is stable enough to remain nearly still without human intervention,
 even in a GPS-denied environment.
@@ -72,7 +72,7 @@ The Android app has 5 sliders to control the drone:
     \item Throttle (translated to vertical speed)
     \item Gimbal Tilt (translated to gimbal tilt speed)
 \end{enumerate}
-As well as buttons to enable or disable virtual control in the flight controller,
+In addition to these sliders, there are buttons to enable or disable virtual control in the flight controller,
 to command the drone to takeoff,
 and to command the drone to land (blindly).
 The app works just well enough to allow for basic testing of this proof of concept,
@@ -107,3 +107,15 @@ apparently to protect it from the ground since it has very close clearance.
 So, although the drone responds to commands during this phase of landing,
 the companion board cannot see the landing pad and therefore cannot generate commands
 for last minute correction.
+
+\subsection{Conclusion}
+
+This experiment shows that the algorithm developed in the master thesis~\cite{joshua_master_thesis} works in the real world,
+and not just in simulation, even with low-quality image streams and high network latency.
+The main problem in our initial experiments (see Section~\ref{section:initial_hexacopters}) seems to have been the drone platforms themselves.
+The several sensors (apparently undisclosed by DJI) on the Spark which provide accurate velocity/position data based on the appearance of the external environment
+allow the drone to accurately control its position in GPS-denied environments.
+This makes the Spark much more stable as a platform than the hexacopters that we have made.
+However, we will not continue development with the Spark, since it is essentially a closed system and provides no
+room for adding additional components.
+Instead, we will add additional sensors to our drone platforms to make them less reliant on GPS.

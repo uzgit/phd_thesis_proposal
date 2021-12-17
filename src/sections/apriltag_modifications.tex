@@ -45,7 +45,7 @@ marker tracking,
 and coordinate system transforms.
 The landing pads are defined as concentric, co-planar tag bundles with the same yaw orientation
 that take the position and orientation of their largest detected marker,
-expose their pixel centers $u,v$ (for PID tracking),
+expose their pixel centers $u,v$ (for PID tracking with a gimbal-mounted camera),
 and calculate their camera translation (position rotated by the inverse of their orientation)
 before exposure to other ROS nodes through messages.
 The code is available at its Github repository ~\cite{edited_apriltag}.
@@ -111,17 +111,17 @@ The definition is shown in Table \ref{table:apriltag_24h10_definition}, and the 
 \begin{table}[]
     \centering
 \begin{tabular}{
->{\columncolor[HTML]{C0C0C0}}c
->{\columncolor[HTML]{FFFFFF}}c ccc
->{\columncolor[HTML]{FFFFFF}}c
->{\columncolor[HTML]{C0C0C0}}c }
-{\color[HTML]{333333} d} & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} d} & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} d} & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} d} & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} d} & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} d} & {\color[HTML]{333333} d} \\
-{\color[HTML]{333333} d} & {\color[HTML]{333333} w}                         & \cellcolor[HTML]{FFFFFF}{\color[HTML]{333333} w} & \cellcolor[HTML]{FFFFFF}{\color[HTML]{333333} w} & \cellcolor[HTML]{FFFFFF}{\color[HTML]{333333} w} & {\color[HTML]{333333} w}                         & {\color[HTML]{333333} d} \\
-{\color[HTML]{333333} d} & {\color[HTML]{333333} w}                         & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} b} & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} b} & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} b} & {\color[HTML]{333333} w}                         & {\color[HTML]{333333} d} \\
-{\color[HTML]{333333} d} & {\color[HTML]{333333} w}                         & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} b} & \cellcolor[HTML]{3166FF}{\color[HTML]{FFFFFF} x} & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} b} & {\color[HTML]{333333} w}                         & {\color[HTML]{333333} d} \\
-{\color[HTML]{333333} d} & {\color[HTML]{333333} w}                         & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} b} & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} b} & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} b} & {\color[HTML]{333333} w}                         & {\color[HTML]{333333} d} \\
-{\color[HTML]{333333} d} & {\color[HTML]{333333} w}                         & \cellcolor[HTML]{FFFFFF}{\color[HTML]{333333} w} & \cellcolor[HTML]{FFFFFF}{\color[HTML]{333333} w} & \cellcolor[HTML]{FFFFFF}{\color[HTML]{333333} w} & {\color[HTML]{333333} w}                         & {\color[HTML]{333333} d} \\
-{\color[HTML]{333333} d} & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} d} & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} d} & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} d} & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} d} & \cellcolor[HTML]{C0C0C0}{\color[HTML]{333333} d} & {\color[HTML]{333333} d}
+>{\columncolor[HTML]{C0C0C0}}l
+>{\columncolor[HTML]{333333}}l lll
+>{\columncolor[HTML]{333333}}l
+>{\columncolor[HTML]{C0C0C0}}l }
+d & \cellcolor[HTML]{C0C0C0}d & \cellcolor[HTML]{C0C0C0}d                        & \cellcolor[HTML]{C0C0C0}d                        & \cellcolor[HTML]{C0C0C0}d                        & \cellcolor[HTML]{C0C0C0}d & d \\
+d & {\color[HTML]{FFFFFF} b}  & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} b} & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} b} & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} b} & {\color[HTML]{FFFFFF} b}  & d \\
+d & {\color[HTML]{FFFFFF} b}  & w                                                & w                                                & w                                                & {\color[HTML]{FFFFFF} b}  & d \\
+d & {\color[HTML]{FFFFFF} b}  & w                                                & \cellcolor[HTML]{34CDF9}x                        & w                                                & {\color[HTML]{FFFFFF} b}  & d \\
+d & {\color[HTML]{FFFFFF} b}  & w                                                & w                                                & w                                                & {\color[HTML]{FFFFFF} b}  & d \\
+d & {\color[HTML]{FFFFFF} b}  & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} b} & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} b} & \cellcolor[HTML]{333333}{\color[HTML]{FFFFFF} b} & {\color[HTML]{FFFFFF} b}  & d \\
+d & \cellcolor[HTML]{C0C0C0}d & \cellcolor[HTML]{C0C0C0}d                        & \cellcolor[HTML]{C0C0C0}d                        & \cellcolor[HTML]{C0C0C0}d                        & \cellcolor[HTML]{C0C0C0}d & d
 \end{tabular}
     \vspace*{0.5cm}
     \caption{Definition for the April Tag 24h10 family. Each square is marked by a letter representing its function.
@@ -131,7 +131,7 @@ The definition is shown in Table \ref{table:apriltag_24h10_definition}, and the 
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{tag24h10_mosaic_grey_background}
+    \includegraphics[width=0.5\textwidth]{tag24h10_mosaic_grey_background}
     \caption{The set of markers in the April Tag 24h10 family. The grey squares are not part of the marker definitions.}
     \label{figure:apriltag24h10}
 \end{figure}
@@ -159,7 +159,8 @@ when the flip happens.
 The particularly dangerous data points are therefore the negative outliers in the early stages of the landing.
 Filtering is useful on the east component to reduce noise.
 Filtering is not essential on the up component because orientation flipping does not change the perceived height.
-Variation in the up component is simply considered noise.
+Variation in the up component is simply noise, as there is no ambiguity in this dimension.
+(Negative values for this component would imply that the marker is \textit{behind} the camera, in which case the camera would not detect it.)
 In spite of the fluctuating raw and filtered values, the position estimate data can be used for precision landing,
 as demonstrated in Figure \ref{figure:px4_precland_trajectories} which shows the horizontal distance from the landing pad versus altitude for multiple such landings.
 A video of an example landing using the method is available online.~\footnote{Example landing using PX4's precland: \url{https://vimeo.com/625488249}}
@@ -180,7 +181,9 @@ A video of an example landing using the method is available online.~\footnote{Ex
          \centering
          \includegraphics[width=\textwidth]{images/landing_apriltag24h10_up}
     \end{subfigure}
-    \caption{Unfiltered and filtered estimates of the landing pad's position during landing.}
+    \caption{Unfiltered and filtered estimates of the landing pad's position during landing. The north and east components exhibit ambiguity, which manifests as sign flips and extreme noise.
+    These appear in the red dots which mark the raw position readings of the landing pad. When they are smoothed by the Kalman filter, whose output is indicated by the smoother blue line,
+    the performance is stable enough for landing in simulation. The up component exhibits noise, but no true ambiguity.}
     \label{figure:filtered_unfiltered_apriltag_24h10}
 \end{figure}
 
@@ -188,7 +191,8 @@ A video of an example landing using the method is available online.~\footnote{Ex
     \centering
     \includegraphics[width=0.49\textwidth]{px4_precland_trajectories}
     \caption{Horizontal distance from the landing pad versus altitude for 3 PX4 precision landings using the filtered April Tag 24h10 system.
-    This graph should be read as if the drone is approaching from the right and moving left.}
+    This graph should be read as if the drone is approaching from the right and moving left. The altitude of the drone decreases only when the drone is within a small radius
+    from the landing pad. Approaching from an altitude of about 7.5 meters, the drone executes several successful landings.}
     \label{figure:px4_precland_trajectories}
 \end{figure}
 
@@ -197,7 +201,7 @@ A video of an example landing using the method is available online.~\footnote{Ex
 Both the April Tag and WhyCon/WhyCode systems suffer from fundamental issues of orientation ambiguity.
 April Tag's more intricate structure makes its perception of orientation more robust than that of WhyCon/WhyCode,
 but it still does not eliminate the ambiguity entirely, and we can see the destructive consequences of this if the
-orientation is used in other calculations.
+orientation is used in subsequent calculations.
 Still, simple Kalman filtering can mitigate the issue enough that the system can be used for precision landing.
 Furthermore, the flexible layout of April Tag makes it a better choice for precision landing.
 The ability to embed concentric markers within each other is critical to maintaining a continuous view of the landing pad
