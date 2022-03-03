@@ -1,10 +1,41 @@
 \section{Overview (1 page)}
 \label{section:research_plan_overview}
 
-Here we outline the plan for using the knowledge and physical drone platforms generated
+Here we outline the plan for using the knowledge and physical drone platforms created
 until now to create a method for landing in unstructured environments.
 The critical difference is that we will avoid making major assumptions about the landing area,
 e.g.~that it uses a specific type of fiducial marker.
 The goal is to create a lightweight method for analyzing terrain in real time,
 identifying safe landing sites,
 and navigating to those landing sites without using some exterior information such as GPS.
+We keep in mind not only the state of the art in drone sensing and automation,
+but also the sensors, drone platforms, flight controllers,
+and computational hardware that we have immediately available.
+The research plan consists of 5 general steps:
+
+\textbf{Generation of a data set of realistic drone sensor data for testing terrain analysis methods.}
+We will programmatically create a large, synthetic data set using AirSim for offline testing of terrain analysis methods.
+The data will be RGBD images and LIDAR point clouds (tagged with IMU data describing the orientation of the sensor, and distortion parameters as applicable)
+that are labeled according to which regions are considered safe landing sites.
+We will also collect real world sensor data which will serve as a partial validation test set.
+
+\textbf{Creation of multiple terrain analysis methods, and performance comparison on the data set.}
+We will create several methods for analyzing terrain in the format of the data set,
+and we will compare their performance in offline evaluations.
+Generally, the methods will preprocess the data~(rectification, resizing, and transformation of the data according to the IMU tags),
+then analyze the data for safety of landing locations (according to flatness, smoothness, largeness of contiguous safe regions, and predicted material type),
+and finally output a mask describing the predicted ``safety metrics'' of the input data.
+
+\textbf{Performance analysis of any viable methods in simulated autonomous landing scenarios.}
+We will create a post-processing wrapper to detect and track safe landing regions from the safety masks,
+and then translate that information into MAVLink commands for the flight controller.
+We will test this in AirSim with ArduPilot and/or PX4 plugins according to ease of implementation.
+
+\textbf{Enhancement/adaptation of current drone platforms for real world testing.}
+We will add more sensors to our Tarot 680 platforms to try to make them stable in autonomous flight without GPS.
+We will also package our sensors into custom waterproof, protective cases and mount them onto a stabilized gimbal.
+
+\textbf{Performance analysis of any viable methods on physical drone platforms.}
+We will test the methods offline again, to evaluate their potential runtime framerate and energy consumption
+on our Google Coral and Jetson Nano hardware platforms.
+We will test any sufficiently power-efficient and fast methods in real autonomous landing scenarios.
