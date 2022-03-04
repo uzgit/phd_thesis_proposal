@@ -20,8 +20,6 @@
 \newcommand{\documenttitle}{Real Time, Onboard-only Landing Site Evaluation for Autonomous Drones}
 \newcommand{\documentauthor}{Joshua Springer}
 
-\usepackage{glossaries}
-\input{sections/glossary.tex}
 \usepackage[pdfusetitle]{hyperref}
 
 \begin{document}
@@ -43,7 +41,6 @@
     \chapter{Completed and Ongoing Projects}
     \input{sections/initial_hexacopters.tex}
     \input{sections/ir_drone.tex}
-    \input{sections/airsim_dataset_generation.tex}
     \input{sections/fiducial_system_modifications.tex}
     \input{sections/proof_of_concept.tex}
 
@@ -57,7 +54,8 @@
     \input{sections/risk_assessment.tex}
 
     \newpage
+    \bibliographystyle{IEEEtran}
     \bibliography{references}
-    \bibliographystyle{plain}
+%    \bibliographystyle{plain}
 
 \end{document}

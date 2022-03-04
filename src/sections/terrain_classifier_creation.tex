@@ -1,4 +1,4 @@
-\section{Terrain Classifier Creation (2 pages)}
+\section{Terrain Classifier Creation}
 
 We will create multiple methods and evaluate them on their ability to predict the
 safety mask of the landing sites in the synthetic data sets.
@@ -18,7 +18,8 @@ In the case of RGBD images, we should rectify input to remove sensor distortion.
 This is helpful for understanding what the data truly represents,
 and also removes sensor biases, so that the terrain analysis methods do not overfit to data from a particular sensor.
 We will also transform input according to IMU tags in order to properly identify slants.
-One option for pre-processing in the case of LIDAR point clouds is to convert them to depth images.
+One option for pre-processing in the case of LIDAR point clouds is to convert them to depth images,
+and we anticipate that it will be generally less computationally expensive to process depth images instead of point clouds.
 In either case, the input must be normalized with respect to sensor calibration data -
 sensors tend to auto-adjust their scales in order to clarify differences in values at each point.
 This occurs when RGB cameras auto-adjust brightness in order to make a clearer picture,
@@ -26,16 +27,16 @@ and also when an RGBD camera detects the average range of detected depths, and a
 Finally, downsizing input images and point clouds is a common method of computational speedup
 that will most likely be necessary, given that the target hardware platforms are limited, embedded boards.
 
-\subsection{Topological Analysis}
+\subsection{Topographical Analysis}
 
-The most important aspect of a safe landing site is its topology.
+The most important aspect of a safe landing site is its topography.
 We want to identify regions of the pre-processed input images that are sufficiently flat and large.
 Signal processing methods, such as analysis of the image's gradient, and even edge detection algorithms (e.g.~Canny, etc.)
 can be used to detect contiguous flat regions.
 Deep learning methods such as pooling and 2D convolutions can accomplish similar tasks.
-The most relevant data channel in an RGBD image for topological analysis is the depth channel,
+The most relevant data channel in an RGBD image for topographical analysis is the depth channel,
 but other channels could still offer useful information.
-While it is possible to ``hand-make'' a solution for finding a landing region that is topologically viable,
+While it is possible to ``hand-make'' a solution for finding a landing region that is topographical viable,
 it may also be useful to train deep learning methods to do this task.
 They will likely have inherent biases that are different from the hand-made solutions,
 which will give a wider view of the solution space in the worst case,
@@ -45,21 +46,28 @@ and therefore may run faster.
 
 \subsection{Semantic Segmentation}
 
+One key application of image processing with deep learning is to segment images into the things they represent.
+This would offer a huge benefit in terms of autonomous landing, as the system could recognize e.g.~water as unsafe,
+and leaves as safe, regardless of their topography.
+In general, it is expensive to label real world data sets for semantic segmentation because it must be done by hand.
+However, the segmentation masks in AirSim allow quick generation of large, semantically labeled data sets.
+Therefore, we will supplement the topographical analysis with semantic segmentation in the hopes of getting better results.
 
-
-We will use a U-net or residual u-net, or conventional CNN for basic semantic segmentation of the pre-processed input images.
-
+We will use a conventional CNN, U-net, residual U-net, for basic semantic segmentation of the pre-processed input images.
+CNNs can semantically segment scenes based on kernels, U-nets use both convolutions and an encoder-decoder architecture,
+and residual U-nets
+All of these architectures are effective for semantic image segmentation, but in the context of embedded drone landing,
+we have to strike a balance between the more complex networks that offer more intricate segmentation,
+and the less complex networks that are likely to run faster.
+The viability of each of the approaches must be empirically tested on the target platforms.
 
 As an example of how this will work, we take an example from my project in RU's Deep Learning
 course, wherein my group member and I used a Residual U-net to classify defects
 in manufactured steel.
-More than 17,000 images were labeled by hand, according to which of 4 defects they contained.
+The data is a set of 17,000 images that are labeled by hand, according to which of 4 defects they contained.
 Figure~\ref{figure:example_steel_prediction} shows an example of the input data from this project,
 where the yellow and blue outlines show the locations of different types of defect areas.
-
-This particular project was very time-limited, so the network trained for only 4 epochs,
-but was able to achieve about 50\% prediction accuracy in that time,
-and its output for an example image can be seen in Figure~\ref{figure:example_steel_prediction}.
+An example output mask can be seen in Figure~\ref{figure:example_steel_prediction}.
 This project also gave some insight into accuracy metrics that can help bias the output
 for/against false positives/negatives.
 For example, in the case of the steel defect recognition, we used a Tversky metric to
@@ -88,3 +96,13 @@ This is purely to give an intuition of the form of the problem we will use the c
     \caption{A visualization of the network's performance in predicting defects.}
     \label{figure:example_steel_prediction}
 \end{figure}
+
+\subsection{Target Output}
+\label{section:target_output}
+
+The results of the topographical analysis and semantic segmentation will pass to
+a hand-made wrapper
+or subsequent network layer
+that can combine them in order to create a mask of the predicted safety metrics of the terrain below the drone.
+This safety mask will likely depend mostly on the topographical analysis, with the semantic segmentation giving the ability
+to ``veto'' potentially smooth but dangerous regions like water, and classify as safe somewhat rough but potentially safe regions like leaves.
