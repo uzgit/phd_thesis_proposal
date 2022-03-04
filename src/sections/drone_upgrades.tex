@@ -1,0 +1,27 @@
+\section{Drone Upgrades}
+\label{section:drone_upgrades}
+
+The drone systems will need some modifications in order to accommodate the proposed unstructured landing systems in Iceland,
+with the principal modification being the addition of secondary positional and velocity sensors.
+This is motivated by the performance of DJI drones in GPS-denied environments and in environments with low GPS accuracy, i.e.~most of Iceland.
+We will install and test optical flow sensors and LIDAR sensors, which give the drones the ability to
+accurately estimate their velocity and altitude, respectively, without GPS.
+This should give the drones a better ability to maintain their position without a human operator,
+and therefore should allow them to operate in \textit{autonomous} mode.
+Additionally, we will test a Pixhawk Cube Orange flight controller and Here 3 GPS (RTK compatible)
+on one of the drone systems.
+This will allow a more minimal setup inside the drone, since the flight controller will be self-contained,
+and not a combination of Raspberry Pi and Navio2.
+The GPS itself should be more accurate, and can be supplemented with an RTK base station if necessary.
+
+We have several sensors for which we will design and build waterproof, protective cases,
+and adapters such that they can be mounted in a gimbal:
+\begin{itemize}[itemsep=-0.1cm]
+    \item an Intel RealSense D435 RGBD camera
+    \item an Intel RealSense D455 RGBD camera with integrated IMU
+    \item an Intel RealSense L515 LIDAR module with integrated IMU
+    \item a Texas Instruments IWR6843 60 GHz RADAR module
+\end{itemize}
+These sensors can provide real world analogues to the RGBD images and point clouds in the synthetic data set.
+There will be minor additional overhead in interfacing these sensors with the companion boards,
+e.g.~compiling their libraries and figuring out their dependencies with likely limited documentation.

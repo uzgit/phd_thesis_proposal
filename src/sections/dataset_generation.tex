@@ -12,8 +12,8 @@ according to its topology),
 it is obviously not a safe landing site and can be ruled out just by being water.
 Conversely, an area of grass that may appear rough is not necessarily a dangerous landing site.
 By using the segmentation masks in creating the labels,
-we hope to discriminate between potential landing sites on a level other than just topology.
-However, topology will be the \textit{principal} way of determining the safety of a landing site,
+we hope to discriminate between potential landing sites on another level than simply topology.
+However, topography will be the principal way of determining the safety of a landing site,
 and the most important aspects will be to minimal roughness, minimal slant, and maximal size.
 So the ideal landing site will be a large, smooth, level area
 having the appearance of a ``safe'' material.
@@ -34,7 +34,7 @@ on creating a script to automatically generate data sets of specified sizes.
 The data sets will be taken from multiple simulated environments to try to give an unbiased
 sense of what possible good landing sites look like.
 
-The real world data will serve as a final testing set, which will give a notion of how well
+The real world data will serve as a validation set, which will give a notion of how well
 the synthetic data correspond to the real world.
 We will the label the real world data in a similar way to the synthetic data, with the exception
 that we will not have corresponding segmentation masks.

@@ -1,7 +1,5 @@
-% Preamble
 \documentclass[11pt, a4paper]{report}
 
-% Packages
 \usepackage[top=2.54cm, bottom=2.54cm, right=2.54cm, left=2.54cm]{geometry}
 \usepackage{lipsum}
 \usepackage{graphicx}
@@ -12,47 +10,24 @@
 \newdateformat{specialdate}{\monthname[\THEMONTH] \THEYEAR}
 \usepackage{enumitem}
 \usepackage[cc]{titlepic}
-
 \usepackage{subcaption}
-
 \usepackage{blindtext}
-
 \usepackage{tocloft}
-%\renewcommand{\cftpartleader}{\cftdotfill{\cftdotsep}} % for parts
-%\renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}} % for chapters
-\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}} % for sections
-% for Icelandic
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-%\usepackage[icelandic]{babel}
 
 \newcommand{\documenttitle}{Real Time, Onboard-only Landing Site Evaluation and Landing Execution for Autonomous Drones}
 \newcommand{\documentauthor}{Joshua Springer}
 
-\usepackage{glossaries}
-\input{sections/glossary.tex}
 \usepackage[pdfusetitle]{hyperref}
-
-%\title{Real Time, Onboard-only Landing Site Evaluation for Autonomous Drones}
-%\author{Joshua Springer}
-%\title{
-%    {\centering\includegraphics[width=5cm]{ru_logo.png}}~\\[1cm]
-%    \textbf{Real Time, Onboard-only Landing Site Evaluation for Autonomous Drones}
-%
-%
-%}
-%
-%\date{\specialdate\today}
 
 \begin{document}
 
     % pre-text stuff
     \pagenumbering{roman}
     \input{sections/title_page.tex}
-    \input{sections/copyright.tex}
     \input{sections/abstract_english.tex}
-    \input{sections/abstract_icelandic.tex}
-%    \input{sections/acknowledgements.tex}
     \tableofcontents
     \newpage
 
@@ -63,13 +38,10 @@
     \input{sections/background.tex}
     \input{sections/related_work.tex}
 
-    \chapter{Current Progress}
+    \chapter{Completed and Ongoing Projects}
     \input{sections/initial_hexacopters.tex}
-    \input{sections/whycode_modifications.tex}
-    \input{sections/apriltag_modifications.tex}
-    \input{sections/airsim_dataset_generation.tex}
-    \input{sections/small_drone.tex}
     \input{sections/ir_drone.tex}
+    \input{sections/fiducial_system_modifications.tex}
     \input{sections/proof_of_concept.tex}
 
     \chapter{Research Plan}
@@ -78,11 +50,12 @@
     \input{sections/terrain_classifier_creation.tex}
     \input{sections/testing_in_simulation.tex}
     \input{sections/testing_on_physical_hardware.tex}
-    \input{sections/choice_of_flight_software.tex}
+    \input{sections/drone_upgrades.tex}
     \input{sections/risk_assessment.tex}
 
     \newpage
+    \bibliographystyle{IEEEtran}
     \bibliography{references}
-    \bibliographystyle{unsrt}
+%    \bibliographystyle{plain}
 
 \end{document}

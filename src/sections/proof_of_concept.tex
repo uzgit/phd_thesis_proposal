@@ -11,6 +11,7 @@ its implementation is significantly constrained because of its basis on the DJI 
 as explained below.
 The DJI Mobile SDK is necessary because the DJI Spark has no companion board,
 but anticipated future drone systems will have a more ideal setup using the DJI Onboard SDK.
+The following content will be some of the content of our next paper.
 
 \subsection{System Architecture}
 
@@ -56,32 +57,26 @@ means that the drone should move forward at its maximum velocity.
 \subsection{Results}
 
 The system is able to reliably land the drone without human intervention.
-\footnote{Autonomous landing demonstration video: \url{https://vimeo.com/manage/videos/646612738}}
-So far, we have tested it with April Tag 48h12 and April Tag 24h10 landing pads.
-As anticipated, the April Tag 24h10 tags are subject to somewhat common instances of orientation ambiguity,
+\footnote{Autonomous landing demonstration video: \url{https://vimeo.com/664863992}}
+So far, we have tested it with April Tag 48h12 and April Tag 24h12 landing pads,
+and we will continue testing the modified WhyCode systems outlined in Section~\ref{section:fiducial_system_modifications}.
+As anticipated, the April Tag 24h12 tags are subject to common instances of orientation ambiguity,
 whereas the April Tag 48h12 tags are mostly free of orientation ambiguity.
 In the demonstration video, this orientation ambiguity appears as jittery control inputs from the companion board,
 as well as (sometimes) jittery behavior from the drone.
-Surprisingly - and fortunately - this behavior appears to be non-destructive in this case.
+Fortunately - and surprisingly - this behavior appears to be non-destructive in this case.
 
 The Android app has 5 sliders to control the drone:
-\begin{enumerate}
-    \item Pitch (translated to forward/backward speed)
-    \item Roll (translated to left/right speed)
-    \item Yaw (translated to yaw speed, i.e.~rotational speed in the Z axis)
-    \item Throttle (translated to vertical speed)
-    \item Gimbal Tilt (translated to gimbal tilt speed)
-\end{enumerate}
-In addition to these sliders, there are buttons to enable or disable virtual control in the flight controller,
+pitch (translated to forward/backward speed),
+roll (translated to left/right speed),
+yaw (translated to yaw speed, i.e.~rotational speed in the Z axis),
+throttle (translated to vertical speed),
+gimbal tilt (translated to gimbal tilt speed).
+It also has buttons to enable or disable virtual control in the flight controller,
 to command the drone to takeoff,
 and to command the drone to land (blindly).
-The app works just well enough to allow for basic testing of this proof of concept,
-but has only received minimal development efforts because it is almost pure overhead.
-Therefore, it crashes often.
 The proposed research will avoid the Mobile SDK and will therefore avoid the need for a custom app.
 However, subsequent app development can be the subject of a future project if necessary.
-Still, the app has worked well enough to allow for many autonomous landings.
-\footnote{The autonomous landing demonstration from the point of view of the app: \url{https://vimeo.com/manage/videos/646620944}}
 
 \subsection{Limitations and Implementation Quirks}
 
