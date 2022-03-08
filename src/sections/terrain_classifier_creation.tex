@@ -4,12 +4,12 @@ We will create multiple methods and evaluate them on their ability to predict th
 safety mask of the landing sites in the synthetic data sets.
 We will focus first on using U-nets to map from the input LIDAR or RGBD image
 to the output mask, as they have been proven to be good classifiers in many different scenarios,
-from terrain analysis~\cite{unet_semantic_terrain_segmentation}, to medical image segmentation~\cite{unet_medical_image_segmentation}, to road identification~\cite{unet_road_extraction}, etc.
+from terrain analysis, to tissue analysis, to road identification, etc.
 We anticipate that the main challenge in this domain will not be
 to train the networks, but rather to keep them small enough
 so that they can execute quickly on embedded hardware.
 Nevertheless, we will start by focusing strictly on maximizing the ability of the networks
-to accurately predict the safety masks, and we will focus on optimization in later steps.
+to accurately predict the safety masks.
 
 \subsection{Pre-Processing}
 
@@ -80,7 +80,7 @@ Conversely, in the case of autonomous drones,
 we would like the networks to be conservative in their identification of safe landing sites,
 so that they never direct the drone to land in unsafe landing sites, even though they may reject
 some landing sites that are actually safe.
-This example serves purely to give an intuition of the form of the problem we will use the classifiers to solve.
+This is purely to give an intuition of the form of the problem we will use the classifiers to solve.
 
 \begin{figure}
     \centering
@@ -93,9 +93,7 @@ This example serves purely to give an intuition of the form of the problem we wi
     \subfloat[Defect 3 Prediction]{\includegraphics[width = 0.5\textwidth]{images/pred_def2.png}}\\
     \subfloat[Defect 4 Mask]{\includegraphics[width = 0.5\textwidth]{images/true_def3.png}}
     \subfloat[Defect 4 Prediction]{\includegraphics[width = 0.5\textwidth]{images/pred_def3.png}}
-    \caption{A visualization of a residual U-net's performance in predicting defects in manufactured steel after being trained with human-created labels.
-    This problem is similar in form to our upcoming problem of identifying safe landing sites - given an input image,
-        the network must classify specific regions according to their characteristics.}
+    \caption{A visualization of the network's performance in predicting defects.}
     \label{figure:example_steel_prediction}
 \end{figure}
 
