@@ -8,7 +8,7 @@ Borowczyk et~al.~\cite{high_velocity_landing} have implemented a system allowing
 
 Falanga et~al.~\cite{vision_based_x_platform} outline a method for landing a quadrotor running the PX4 autopilot software on a moving platform indoors. The landing platform is fitted with a specific marker made up of a cross and a circle. The drone uses 2 cameras, the first mounted straight down from the drone, and the second mounted at a 45 degree angle down and towards the front of the drone. The images from these cameras are used to solve a  {PnP} problem which finds the relative pose of the landing platform's marker. A distance sensor helps to scale the vision-based pose estimation. The onboard computer determines optimal approach trajectories using this information. A Kalman filter makes the process robust to missed detections and helps to determine the velocity of the landing platform. Successful landings were reported with the landing platform moving up to 1.2 m/s.
 
-Wubben et~al.~\cite{accurate_landing_UAV_ground_pattern} use the typical setup of a hexacopter drone with a single camera in a fixed, downward facing orientation to identify a landing platform via 2 ArUco markers. A Pixhawk controls the drone using ArduPilot, and a Raspberry Pi handles image processing and fiducial identification. The method reports successful and accurate landings, but also occasional failures due to visual loss of the landing platform. This visual loss was caused by sudden gusts of wind which pushed the drone away from the landing platform and out of the fixed camera's field of view.
+Wubben et~al.~\cite{accurate_landing_UAV_ground_pattern} use the typical setup of a hexacopter drone with a single camera in a fixed, downward facing orientation to identify a landing platform via 2 ArUco markers. A Pixhawk controls the drone using ArduPilot, and a Raspberry Pi handles image processing and fiducial identification. The method reports successful and accurate landings, but also occasional failures due to visual loss of the landing platform. This visual loss was caused by sudden gusts of wind which pushed the drone away from the landing platform and out of the fixed camera's view.
 
 Pluckter et~al.~\cite{drone_landing_unstructured_environments} have developed a method for precisely landing a drone in an \textit{unstructured} environment, which is to say an environment that has not been significantly artificially marked. On takeoff, the drone visually captures key points of interest in its environment. It then performs its mission and returns to a location above its takeoff location using  {GPS}. Subsequent visual analysis of the surroundings and comparison of this information with the similar information captured at takeoff allow the drone to localize itself. This process is continued throughout the entire landing. This method is interesting and significantly different from the fiducial methods, but only allows the drone to land at the takeoff location.
 
@@ -29,3 +29,21 @@ Johnson et~al.~\cite{helicopter_hazardous_terrain} use structure from motion (Sf
 Garg et~al.~\cite{landing_cues} develop both a monocular method and stereo method to classify landing sites based on their viability, and to land at safe landing sites. The monocular method uses planar homography to generate a dense representation of terrain below a drone. It allows the drone to distinguish between rigid surfaces like ground and non-rigid surfaces like water. The stereo approach allows depth to be extracted from the images, which are also analyzed to identify roughness and slopes. The approaches disable landing if the environment detected is deemed unsuitable. The methods were not robust to surfaces that were covered in leaves because their changing nature led the methods to determine that they were not rigid.
 
 Matunara and Scherer~\cite{conv_3d_lidar_landing} present a method to identify safe landing sites for autonomous helicopters using a 3D convolutional neural network. The data set is partially synthetic, and partially hand-labeled. Their method is able to identify low-height vegetation as a safe landing site, whereas conventional methods of analysis would label them as too rough. In this case they are viewed as ``porous'' instead of ``unsafe.'' The method is able to analyze successfully a cubic meter of ground in less than 5ms. It is tested on real and synthetic data, but not embedded onto a physical drone for real world landing tests.
+
+\subsection{Summary}
+
+Many methods exist for autonomous drone landing,
+with some depending on special infrastructure to mark a known landing pad,
+and with others analyzing terrain to identify previously unknown landing sites.
+Infrastructure at known landing pads can be active (e.g.~radio/IR beacons, cameras, etc.) or passive (e.g.~visual fiducial markers).
+Methods for identifying previously unknown landing sites depend on sensor-based terrain analysis or visual matching
+and typically use RGB, RGBD, or LIDAR/LADAR to collect information about the ground below.
+Methods of analyzing the sensor data range from very finely human-tuned methods of edge detection/dilation in images,
+to black-box deep learning methods.
+Additionally, older methods tend to use only real-world data, while newer methods begin to leverage quickly-generated, cheap, synthetic data from simulators.
+Some methods can use single images, while others require images from multiple locations in order to deduce the underlying 3D structure of the terrain.
+In almost all cases, the sensors are fixed rigidly to the drone, instead of being mounted on a gimbal.
+It is common to approach the general location of a landing site using GPS,
+and then to carry out the landing using some augmented sensing.
+Processor-heavy methods cannot necessarily run in real time on a drone, and must either be run offline as a proof of concept,
+or must be offloaded to a sophisticated ground control station for real time processing on bulky hardware.

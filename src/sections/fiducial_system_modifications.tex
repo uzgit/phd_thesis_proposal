@@ -26,7 +26,7 @@ This is the content of a paper we have submitted to IROS 2022.
     \label{figure:discontinuities}
 \end{figure}
 
-\subsubsection{WhyCode Orig - Tooth Arclength Sampling}
+\subsubsection{WhyCode Orig: Tooth Arclength Sampling}
 \label{section:whycode_orig}
 We use a version of WhyCode created by Ulrich~\cite{ulrich} as a baseline for testing.
 The method samples the ellipse that goes through the centers of the ``teeth'' forming the marker's ID
@@ -56,7 +56,7 @@ We use WhyCode markers with 8-bit IDs, so that there are several sample points a
     \end{subfigure}
 \end{figure}
 
-\subsubsection{WhyCode Ellipse - Radial Tooth Sampling}
+\subsubsection{WhyCode Ellipse: Radial Tooth Sampling}
 The first method that we have created for reducing orientation ambiguity is the \texttt{ellipse\_sampling} branch of~\cite{uzgit_whycon}.
 The method determines the marker ID and the two candidate solutions for the orientation as in WhyCode Orig,
 after which it identifies the lines that goes from the center of the white region through the center of each tooth.
@@ -67,7 +67,7 @@ The true edge is determined during sampling, and its value is recorded as a perc
 oriented such that 0 corresponds to the centermost end of the line segment, and 1 corresponds to its outermost end.
 The detector chooses the solution that minimizes the variance of the location of the true edge over the sample lines.
 
-\subsubsection{WhyCode Multi - Planar Regression from Multiple Markers}
+\subsubsection{WhyCode Multi: Planar Regression from Multiple Markers}
 The second method that we have created for reducing orientation ambiguity (the \texttt{multi} branch of~\cite{uzgit_whycon})
 works under the assumption that all markers are co-planar.
 For each input image, the WhyCode algorithm identifies all markers and
@@ -78,7 +78,7 @@ and its yaw is that of any constituent markers, with the assumption they are all
 The detector then calculates all additional attributes for the bundle as if it were a marker.
 This system is tested on an arrangement of 3 co-planar, 8-bit WhyCode markers.
 
-\subsubsection{April Tag 48h12 - Large, Embeddable April Tag Family}
+\subsubsection{April Tag 48h12: Large, Embeddable April Tag Family}
 April Tag provides a default family 48h12, shown in Figure~\ref{figure:apriltag48h12},
 for which the 4 center squares are undefined,
 20 squares provide a white border,
@@ -90,7 +90,7 @@ which is useful in the last stages of a drone landing scenario,
 where the camera is too close to the landing pad to see the larger markers.
 We test this family as a baseline for the performance of April Tag.
 
-\subsubsection{April Tag 24h10 - Small, Embeddable April Tag Family}
+\subsubsection{April Tag 24h10: Small, Embeddable April Tag Family}
 We have created an April Tag 24h10 family (shown in Figure~\ref{figure:apriltag24h10_example}) in response to our
 We have created an April Tag 24h10 family (shown in Figure~\ref{figure:apriltag24h10_example}) in response to our
 initial experiments, which showed that April Tag 48h12 has a slower detection rate than WhyCode on embedded hardware.

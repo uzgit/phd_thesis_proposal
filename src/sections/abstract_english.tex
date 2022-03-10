@@ -7,16 +7,16 @@
     \specialdate\today
 \end{center}
 
-\subsection*{Abstract (1 page)}
+\subsection*{Abstract}
 
 Landing is a last, unsolved problem in autonomous multi-rotor drone flight.
 Many other tasks such as takeoff, waypoint-to-waypoint flight,
 and miscellaneous mission tasks (e.g.~collection of images and video) have been reliably automated.
 Yet, autonomous landing remains largely a manual task because of its inherently risky, sensitive nature.
 The critical result of this is that fully autonomous mission cycles are just out of reach with current technology, in many contexts.
-Prior work towards autonomous multi-rotor landing has been subject to at least one of several disadvantages -
+Prior work towards autonomous multi-rotor landing has been subject to at least one of several disadvantages ---
 either it depends principally on GPS and is therefore subject to possibly fatal inaccuracy (especially in Iceland),
-it has relied on detection of special markers (known a priori) with a downward facing camera (such that it may easily lose sight of the markers during approach and descent),
+it has relied on detection of special markers (known beforehand) with a downward facing camera (such that it may easily lose sight of the markers during approach and descent),
 it uses differences in pixel speed to deduce terrain topology (but therefore depends on motion),
 or it has depended on sophisticated ground stations to carry out the computationally expensive processing required for terrain analysis.
 The proposed research targets the problem of autonomous landing
@@ -29,7 +29,8 @@ with the following constraints:
 Thus far, we have created and tested several drone platforms with 3 different flight control software stacks (ArduPilot, PX4, and DJI),
 which have revealed many challenges of operating drones in Iceland: low GPS accuracy, unpredictable winds, and the commonality of rain.
 While a large, weatherproof drone system can withstand wind and rain, low GPS accuracy has proven to be a real obstacle.
-DJI drones and flight controllers have shown to vastly out-perform others in this regard, and thus provide a good base moving forward.
+DJI drones and flight controllers have shown to vastly out-perform others in this regard,
+but additional sensors, e.g.~LIDAR rangefinders and optical flow sensors, may improve flight performance for ArduPilot/PX4 systems.
 Further, we have tested landing algorithms based on fiducial markers in simulation,
 but differing from previous work in that we use a gimbal-mounted camera to allow it to track the marker over time.
 This has involved the further development of existing fiducial systems (April Tag and WhyCode) to optimize for execution on embedded hardware,
