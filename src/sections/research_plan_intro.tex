@@ -45,11 +45,19 @@ We will test any sufficiently power-efficient and fast methods in real autonomou
     \begin{tabular}{|p{2cm}|p{10cm}|p{2cm}|}\hline
         Task & Milestone & Work Week(s)\\\hline
         Data Set Generation & Creation of a script for synthetic data set generation from AirSim. The script should quickly generate RGBD images, LIDAR point clouds, and segmentation masks, then tag them with IMU data describing the orientation of the sensor, and save them to files. This task is nearly complete. & 1\\\hline
-        Data Set Generation & Creation of a script to label the synthetic data according to top-down methods of signal processing (e.g.~low gradient, edge detection/dilation), and leveraging the segmentation masks. & 3\\\hline
+        Data Set Generation & Creation of a script to label the synthetic data according to top-down methods of signal processing (e.g.~low gradient, edge detection/dilation), and leveraging the segmentation masks. & 2-5\\\hline
+        Terrain Classifier Creation & Creation of 5-10 methods (human-specified, deep learning, and combination of both) for predicting landing site safety according to the data set. & 4-24\\\hline
         Data Set Generation & Collection of real-world IMU-tagged RGBD and LIDAR data for validation data set. Can be done in Iceland in the summer months. Requires mounting the RealSense sensors to one of the existing drones with a companion board and flying several missions. & 8-14\\\hline
-        Terrain Classifier Creation & Creation of 5-10 methods (human-specified, deep learning, and combination of both) for predicting landing site safety according to the data set. & 8-20\\\hline
-        Terrain Classifier Creation & Performance Comparison & \\\hline
+        Terrain Classifier Creation & Performance comparison in terms of safety prediction accuracy. Test on synthetic data, validate on real world data. & 20-28\\\hline
+        Testing in Simulation & Integrate pre-/post-processing wrappers, safe region tracking, and autopilot plugins in AirSim. & 20-28\\\hline
+        Testing in Simulation & Test a series of simulated landing scenarios in AirSim. Performance comparison based on landing success/failure. & 28-32\\\hline
+        Publication & Write a paper detailing the findings from the previous steps, from data set generation to simulated landings. & 33-39\\\hline
+        Real World Tests & Power, runtime rate comparisons among viable methods when executing on real world data on Jetson Nano and Google Coral. & 39-43\\\hline
+        Real World Tests & Upgrading drones with optical flow sensors, laser rangefinders, autonomous flight tests with ArduPilot/PX4 in Iceland. & 43-49\\\hline
+        Real World Tests & Real world landing tests with a physical drone. & 50-58\\\hline
+        Publication & Write a paper detailing the findings from the real world tests. & 54-61\\\hline
+        Thesis & Summarize findings from start to finish. & 62-85\\\hline
     \end{tabular}
-    \caption{Milestones for each task.}
+    \caption{Milestones for each task. Time starts from thesis proposal defense, and overlapping tasks are done in parallel. Work times are estimates only.}
     \label{table:milestones}
 \end{table}
